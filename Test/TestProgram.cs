@@ -16,11 +16,11 @@ namespace Test
             var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
             #endregion
 
-            ControllerSession rwsCs1 = new ControllerSession("192.168.54.204");
+            ControllerSession rwsCs1 = new ControllerSession("localhost");
          
             rwsCs1.UserService.RequestRmmp(Enums.Privilege.MODIFY);
             var rmmpState = rwsCs1.UserService.GetRmmpState();
-            rwsCs1.UserService.RegisterUser("SEPARIA", "RobotStudio", "SE-L-7235120", Enums.LoginType.LOCAL);
+            rwsCs1.UserService.RegisterUser("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL);
             rwsCs1.UserService.GrantOrDenyRmmp(rmmpState.Embedded.State.First().UserID, Enums.Privilege.MODIFY);
             rwsCs1.RobotWareService.MastershipRequest();
             rwsCs1.UserService.CancelHeldOrRequestedRmmp();
