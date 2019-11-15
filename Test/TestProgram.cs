@@ -17,7 +17,6 @@ namespace Test
             #endregion
 
             ControllerSession rwsCs1 = new ControllerSession("192.168.54.204");
-
          
             rwsCs1.UserService.RequestRmmp(Enums.Privilege.MODIFY);
             var rmmpState = rwsCs1.UserService.GetRmmpState();
