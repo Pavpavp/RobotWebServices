@@ -9,7 +9,7 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            #region Find VC ports
+            #region Find VC ports with PCSDK
             var scanner = new NetworkScanner();
             scanner.Scan();
             ControllerInfoCollection controllers = scanner.Controllers;
