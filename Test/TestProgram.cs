@@ -30,8 +30,6 @@ namespace Test
 
            //var sdf = rwsCs1.RobotWareService.GetMotionSystem();
 
-
-
            ;
 
 
