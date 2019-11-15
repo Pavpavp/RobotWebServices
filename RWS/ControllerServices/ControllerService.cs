@@ -10,12 +10,12 @@ using static RWS.Enums;
 
 namespace RWS
 {
-    public class ControllerService
+    public struct ControllerService
     {
 
         public ControllerSession Controller { get; set; }
-        protected ClockOperations ClockOps { get; set; }
-        protected IdentityOperations IdentityOps { get; set; }
+        public ClockOperations ClockOps { get; set; }
+        public IdentityOperations IdentityOps { get; set; }
         public ControllerService(ControllerSession cs)
         {
             Controller = cs;
@@ -63,7 +63,7 @@ namespace RWS
         }
 
 
-        protected class ClockOperations
+        public struct ClockOperations
         {
             public ControllerSession Controller { get; set; }
             public ClockOperations(ControllerSession cs)
@@ -195,7 +195,7 @@ namespace RWS
 
 
 
-        protected class IdentityOperations
+        public struct IdentityOperations
         {
             public ControllerSession Controller { get; set; }
             public IdentityOperations(ControllerSession cs)

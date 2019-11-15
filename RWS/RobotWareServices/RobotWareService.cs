@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RWS.RobotWareServices
 {
-    public class RobotWareService
+    public struct RobotWareService
     {
 
 

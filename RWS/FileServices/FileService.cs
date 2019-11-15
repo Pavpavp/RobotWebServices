@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RWS.RobotWareServices
 {
-    public class FileService
+    public struct FileService
     {
 
 

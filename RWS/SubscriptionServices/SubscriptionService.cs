@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RWS.SubscriptionServices
 {
-    public class SubscriptionService
+    public struct SubscriptionService
     {
         public ControllerSession Controller { get; set; }
 
