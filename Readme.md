@@ -1,6 +1,8 @@
-# ABB Robot Web Services C# wrapper for RobotWare6
- - Many but not all calls are yet included Planning to add support for
- - RobotWare 7 & subscriptions
+# ABB Robot Web Services C# wrapper
+
+ - Only RobotWare 6 is currently supported
+ - Many but not all calls are yet included 
+ - Planning to add support for RobotWare 7 & subscriptions
 
 ## Change log
 
