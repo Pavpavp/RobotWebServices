@@ -63,7 +63,7 @@
     <Compile Include="ControllerServices\StateData\TimeZoneActionsState.cs" />
     <Compile Include="ControllerServices\StateData\TimeZoneResourceState.cs" />
     <Compile Include="ControllerSession.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Misc\Extensions.cs" />
     <Compile Include="GeneralResponse.cs" />
     <Compile Include="ControllerServices\StateData\ControllerResourcesState.cs" />
     <Compile Include="ControllerServices\StateData\IONetworksState.cs" />
@@ -74,7 +74,7 @@
     <Compile Include="RobotWareServices\StateData\GetJointTargetState.cs" />
     <Compile Include="RobotWareServices\StateData\GetMotionSystemState.cs" />
     <Compile Include="RobotWareServices\StateData\GetRobtargetState.cs" />
-    <Compile Include="Enums.cs" />
+    <Compile Include="Misc\Enums.cs" />
     <Compile Include="RobotWareServices\StateData\SetMechUnitState.cs" />
     <Compile Include="SubscriptionServices\EventArgs.cs" />
     <Compile Include="SubscriptionServices\SubscriptionEventHelper.cs" />

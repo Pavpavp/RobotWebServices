@@ -78,9 +78,9 @@ namespace RWS
         }
 
 
-        public static string GetRestartModeString(RestartMode rstMode)
+        public static string GetRestartModeString(RestartMode restartMode)
         {
-            switch (rstMode)
+            switch (restartMode)
             {
                 case RestartMode.RESTART:
                     return "restart";
