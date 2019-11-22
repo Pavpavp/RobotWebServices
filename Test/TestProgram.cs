@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Test
 {
-    class TestProgram
+    class TestConsole
     {
         static void Main(string[] args)
         {
