@@ -1,13 +1,11 @@
 # ABB Robot Web Services C# wrapper for RobotWare6
-Many but not all calls are yet included
-Planning to add support for RobotWare 7 & subscriptions
-
-
+ - Many but not all calls are yet included Planning to add support for
+ - RobotWare 7 & subscriptions
 
 ## Change log
 
-2019 - 11 - 22  
-Added support for subscribing to IOs. Try it as such:
+*2019 - 11 - 22*  
+Added support for IO subscriptions. Try it as such:
 
     class TestProgram
     {
