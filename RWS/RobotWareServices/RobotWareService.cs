@@ -46,7 +46,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<IOSignalsState> GetIOsignals()
+        public GenResponse<IOSignalsState> GetIOSignals()
         {
 
             string method = "GET";
@@ -54,8 +54,13 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return Controller.Call<IOSignalsState>(method, "rw/iosystem/signals", dataParameters, urlParameters);
+            var ioResp = Controller.Call<IOSignalsState>(method, "rw/iosystem/signals", dataParameters, urlParameters);
 
+            foreach (var ioState in ioResp.Embedded.State)
+                ioState.Controller = Controller;
+
+
+            return ioResp;
         }
 
         public GenResponse<IODevicesState> GetIOdevices()

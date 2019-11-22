@@ -1,14 +1,34 @@
 ﻿using Newtonsoft.Json;
+using RWS.SubscriptionServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace RWS.Data
 {
-    public class IOSignalsState
+    public class IOSignalsState : SubscriptionEventHelper
     {
+
+        public event ValueChangedIOEventHandler OnValueChanged
+        {
+            add
+            {
+                ValueChangedEventHandler += value;
+                StartSubscription(Controller, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
+            }
+            remove
+            {
+                SubscriptionSockets[value].Abort();
+                SubscriptionSockets.Remove(value);
+
+                ValueChangedEventHandler -= value;
+
+            }
+        }
+        public ControllerSession Controller { get; set; }
 
         [JsonProperty(PropertyName = "_title")]
         public string Title { get; set; }

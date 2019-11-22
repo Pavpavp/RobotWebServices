@@ -75,6 +75,7 @@
     <Compile Include="ControllerServices\StateData\TimeZoneActionsState.cs" />
     <Compile Include="ControllerServices\StateData\TimeZoneResourceState.cs" />
     <Compile Include="ControllerSession.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="GeneralResponse.cs" />
     <Compile Include="ControllerServices\StateData\ControllerResourcesState.cs" />
     <Compile Include="ControllerServices\StateData\IONetworksState.cs" />
@@ -87,9 +88,8 @@
     <Compile Include="RobotWareServices\StateData\GetRobtargetState.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="RobotWareServices\StateData\SetMechUnitState.cs" />
-    <Compile Include="SubscriptionServices\Elog.cs" />
-    <Compile Include="SubscriptionServices\elog2.cs" />
-    <Compile Include="SubscriptionServices\subscr3.cs" />
+    <Compile Include="SubscriptionServices\EventArgs.cs" />
+    <Compile Include="SubscriptionServices\SubscriptionEventHelper.cs" />
     <Compile Include="SubscriptionServices\SubscriptionService.cs" />
     <Compile Include="UserServices\StateData\GetRmmpState.cs" />
     <Compile Include="UserServices\UserService.cs" />
