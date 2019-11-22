@@ -21,7 +21,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<IONetworksState> GetIONetworks()
+        public BaseResponse<IONetworksState> GetIONetworks()
         {
 
             string method = "GET";
@@ -34,7 +34,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<IONetworksState> GetIONetwork(string network)
+        public BaseResponse<IONetworksState> GetIONetwork(string network)
         {
 
             string method = "GET";
@@ -46,7 +46,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<IOSignalsState> GetIOSignals()
+        public BaseResponse<IOSignalsState> GetIOSignals()
         {
 
             string method = "GET";
@@ -63,7 +63,7 @@ namespace RWS.RobotWareServices
             return ioResp;
         }
 
-        public GenResponse<IODevicesState> GetIOdevices()
+        public BaseResponse<IODevicesState> GetIOdevices()
         {
 
             string method = "GET";
@@ -102,7 +102,7 @@ namespace RWS.RobotWareServices
         }
 
 
-        public GenResponse<string> GetMotionSystemActions()
+        public BaseResponse<string> GetMotionSystemActions()
         {
 
             string method = "GET";
@@ -114,7 +114,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<List<GetMotionSystemState>> GetMotionSystem()
+        public BaseResponse<List<GetMotionSystemState>> GetMotionSystem()
         {
 
             string method = "GET";
@@ -126,7 +126,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<SetMechUnitState> SetMechUnit(string mechUnit)
+        public BaseResponse<SetMechUnitState> SetMechUnit(string mechUnit)
         {
 
             string method = "GET";
@@ -138,7 +138,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<string> GetAllJointSolution(string mechUnit)
+        public BaseResponse<string> GetAllJointSolution(string mechUnit)
         {
 
             string method = "GET";
@@ -178,7 +178,7 @@ namespace RWS.RobotWareServices
 
 
 
-        public GenResponse<GetJointTargetState> GetJointTarget(string mechUnit)
+        public BaseResponse<GetJointTargetState> GetJointTarget(string mechUnit)
         {
             string method = "GET";
 
@@ -189,7 +189,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<GetJointTargetState> SetRAPID()
+        public BaseResponse<GetJointTargetState> SetRAPID()
         {
             string method = "POST";
 
@@ -200,7 +200,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<GetJointTargetState> MastershipRelease()
+        public BaseResponse<GetJointTargetState> MastershipRelease()
         {
             string method = "POST";
 
@@ -234,7 +234,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<GetJointTargetState> GetHwDevices()
+        public BaseResponse<GetJointTargetState> GetHwDevices()
         {
             string method = "GET";
 
@@ -245,7 +245,7 @@ namespace RWS.RobotWareServices
 
         }
 
-        public GenResponse<GetRobtargetState> GetRobTarget(string mechUnit, [Optional]string tool, [Optional]string wobj, [Optional]string coordinate)
+        public BaseResponse<GetRobtargetState> GetRobTarget(string mechUnit, [Optional]string tool, [Optional]string wobj, [Optional]string coordinate)
         {
             string method = "GET";
 

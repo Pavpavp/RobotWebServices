@@ -59,7 +59,7 @@ namespace RWS.UserServices
 
         }
 
-        public GenResponse<GetRmmpState> GetRmmpState()
+        public BaseResponse<GetRmmpState> GetRmmpState()
         {
 
             string method = "GET";

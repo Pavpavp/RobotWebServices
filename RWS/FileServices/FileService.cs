@@ -21,7 +21,7 @@ namespace RWS.RobotWareServices
         }
 
 
-        public GenResponse<GetDirectoryListingState> GetDirectoryListing(string path)
+        public BaseResponse<GetDirectoryListingState> GetDirectoryListing(string path)
         {
 
             string method = "GET";

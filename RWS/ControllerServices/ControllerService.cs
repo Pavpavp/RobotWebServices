@@ -24,7 +24,7 @@ namespace RWS
             IdentityOps = new IdentityOperations(Controller);
         }
 
-        public GenResponse<ControllerResourcesState> GetControllerResources()
+        public BaseResponse<ControllerResourcesState> GetControllerResources()
         {
 
             string method = "GET";
@@ -37,7 +37,7 @@ namespace RWS
         }
 
 
-        public GenResponse<ControllerResourcesState> GetControllerActions()
+        public BaseResponse<ControllerResourcesState> GetControllerActions()
         {
 
             string method = "GET";
@@ -71,7 +71,7 @@ namespace RWS
                 Controller = cs;
             }
 
-            public GenResponse<ClockResourceState> GetClockResource()
+            public BaseResponse<ClockResourceState> GetClockResource()
             {
 
                 string method = "GET";
@@ -83,7 +83,7 @@ namespace RWS
 
             }
 
-            public GenResponse<TimeZoneResourceState> GetTimeZoneResource()
+            public BaseResponse<TimeZoneResourceState> GetTimeZoneResource()
             {
 
                 string method = "GET";
@@ -95,7 +95,7 @@ namespace RWS
 
             }
 
-            public GenResponse<ClockActionsState> GetClockActions()
+            public BaseResponse<ClockActionsState> GetClockActions()
             {
 
                 string method = "GET";
@@ -107,7 +107,7 @@ namespace RWS
 
             }
 
-            public GenResponse<TimeZoneActionsState> GetTimeZoneActions()
+            public BaseResponse<TimeZoneActionsState> GetTimeZoneActions()
             {
 
                 string method = "GET";
@@ -153,7 +153,7 @@ namespace RWS
             }
 
 
-            public GenResponse<TimeServerResourceState> GetTimeServerResource()
+            public BaseResponse<TimeServerResourceState> GetTimeServerResource()
             {
 
                 string method = "GET";
@@ -165,7 +165,7 @@ namespace RWS
 
             }
 
-            public GenResponse<TimeServerActionsState> GetTimeServerActions()
+            public BaseResponse<TimeServerActionsState> GetTimeServerActions()
             {
 
                 string method = "GET";
@@ -203,7 +203,7 @@ namespace RWS
                 Controller = cs;
             }
 
-            public GenResponse<IdentityResourceState> GetIdentityResource()
+            public BaseResponse<IdentityResourceState> GetIdentityResource()
             {
 
                 string method = "GET";
@@ -215,7 +215,7 @@ namespace RWS
 
             }
 
-            public GenResponse<IdentityActionsState> GetIdentityActions()
+            public BaseResponse<IdentityActionsState> GetIdentityActions()
             {
 
                 string method = "GET";

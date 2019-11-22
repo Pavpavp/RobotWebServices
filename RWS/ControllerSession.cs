@@ -47,7 +47,7 @@ namespace RWS
             UAS = uas;
         }
 
-        public GenResponse<T> Call<T>(string method, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters)
+        public BaseResponse<T> Call<T>(string method, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters)
         {
 
             var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + IP, domain);
@@ -82,7 +82,7 @@ namespace RWS
 
         }
 
-        public async Task<GenResponse<T>> CallWithJsonAsync<T>(Uri uri, string method, Tuple<string, string>[] dataParameters, params Tuple<string, string>[] headers)
+        public async Task<BaseResponse<T>> CallWithJsonAsync<T>(Uri uri, string method, Tuple<string, string>[] dataParameters, params Tuple<string, string>[] headers)
         {
             HttpResponseMessage resp1;
             var method1 = new HttpMethod(method);
@@ -105,13 +105,13 @@ namespace RWS
             using (var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(false)))
             {
                 var content = sr.ReadToEnd();
-                GenResponse<T> jsonResponse = default;
-                jsonResponse = JsonConvert.DeserializeObject<GenResponse<T>>(content);
+                BaseResponse<T> jsonResponse = default;
+                jsonResponse = JsonConvert.DeserializeObject<BaseResponse<T>>(content);
                 return jsonResponse;
             }
         }
 
-        public GenResponse<T> CallWithJson<T>(Uri uri, string method, Tuple<string, string>[] dataParameters, params Tuple<string, string>[] headers)
+        public BaseResponse<T> CallWithJson<T>(Uri uri, string method, Tuple<string, string>[] dataParameters, params Tuple<string, string>[] headers)
         {
             var request = WebRequest.CreateHttp(uri);
 
@@ -176,9 +176,9 @@ namespace RWS
 
                     var content = sr.ReadToEnd();
 
-                    GenResponse<T> jsonResponse = default;
+                    BaseResponse<T> jsonResponse = default;
 
-                    jsonResponse = JsonConvert.DeserializeObject<GenResponse<T>>(content);
+                    jsonResponse = JsonConvert.DeserializeObject<BaseResponse<T>>(content);
 
                     return jsonResponse;
 

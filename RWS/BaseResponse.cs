@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RWS.Data
 {
-    public class GenResponse<T>
+    public class BaseResponse<T>
     {
         [JsonProperty(PropertyName = "_links")]
         public Links Links { get; set; }
