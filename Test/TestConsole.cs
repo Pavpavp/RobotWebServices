@@ -20,7 +20,7 @@ namespace Test
             #endregion
 
             ControllerSession rwsCs1 = new ControllerSession("localhost");
-            var ios = await rwsCs1.RobotWareService.GetIOSignals().ConfigureAwait(false);
+            var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
 
             var io0 = ios.Embedded.State[0];
 

@@ -19,7 +19,7 @@ namespace RWS.Tests
             ControllerSession rwsCs1 = new ControllerSession("localhost");
 
             //Act
-            var ios = await rwsCs1.RobotWareService.GetIOSignals().ConfigureAwait(false);
+            var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
 
             //Assert
             Assert.IsNotEmpty(ios.Embedded.State);
