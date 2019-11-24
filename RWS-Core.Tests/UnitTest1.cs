@@ -3,6 +3,8 @@ using RWS.Data;
 using RWS.SubscriptionServices;
 using NUnit.Framework;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RWS_Core.Tests
 {
@@ -27,6 +29,13 @@ namespace RWS_Core.Tests
             //Assert
             Assert.IsNotEmpty(ios);
             Assert.IsNotNull(ios.First().LValue);
+        }
+
+        [Test]
+        public async Task Bonjour_Test(){
+            var b = await ControllerDiscovery.Discover(); //lock thread
+            Assert.IsNotEmpty(b);
+
         }
     }
 }
