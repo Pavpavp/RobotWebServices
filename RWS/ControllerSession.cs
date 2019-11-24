@@ -12,6 +12,7 @@ using RWS.SubscriptionServices;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Linq;
 
 namespace RWS
 {
@@ -170,9 +171,7 @@ namespace RWS
 
         public async Task<BaseResponse<T>> CallAsync<T>(string method, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
         {
-            string uri = BuildUri(domain, urlParameters);
-    
-            string dataParams =  BuildDataParameters(dataParameters) ?? string.Empty;
+            Uri uri = BuildUri(domain, urlParameters);
 
             HttpResponseMessage resp1;
             var method1 = new HttpMethod(method);
@@ -184,19 +183,33 @@ namespace RWS
             using (var client1 = new HttpClient(handler1))
             using (var requestMessage = new HttpRequestMessage(method1, uri))
             {
+                requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
+
                 foreach (var header in headers)
                 {
                     requestMessage.Headers.Add(header.Item1, header.Item2);
                 }
-                requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
+
+                switch (method)
+                {
+                    case "POST":
+                        //var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{UAS.User}:{UAS.Password}"));
+                        //requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
+                        requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
+                        break;
+
+                    default:
+                        break;
+                }
 
                 resp1 = await client1.SendAsync(requestMessage).ConfigureAwait(false);
+                resp1.EnsureSuccessStatusCode();
             }
 
-            return await DeserializeResponse<T>(resp1).ConfigureAwait(false);
+            return await DeserializeJsonResponse<T>(resp1).ConfigureAwait(false);
         }
 
-        private static async Task<BaseResponse<T>> DeserializeResponse<T>(HttpResponseMessage resp1)
+        private static async Task<BaseResponse<T>> DeserializeJsonResponse<T>(HttpResponseMessage resp1)
         {
             using (var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(false)))
             {
@@ -219,13 +232,13 @@ namespace RWS
             return combinedParams.ToString();
         }
 
-        private string BuildUri(string domain, Tuple<string, string>[] urlParameters)
+        private Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
         {
             var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + IP, domain);
 
             if (uri.EndsWith("/", StringComparison.InvariantCulture)) uri = uri.TrimEnd('/');
 
-            if (urlParameters != null && urlParameters.Length > 0)
+            if (urlParameters != null)
             {
                 StringBuilder extraParameters = new StringBuilder();
 
@@ -242,7 +255,7 @@ namespace RWS
 
             Debug.WriteLine(uri);
 
-            return uri;
+            return new Uri(uri);
         }
 
     }

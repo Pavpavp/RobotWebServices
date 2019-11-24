@@ -7,10 +7,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static RWS.SubscriptionServices.SubscriptionEventHelper;
 
 namespace RWS.SubscriptionServices
 {
@@ -52,7 +50,7 @@ namespace RWS.SubscriptionServices
 
         private async Task SocketThreadAsync(HttpClient client, string ip, Dictionary<string, string> httpContent, UAS uas, CancellationToken cancelToken)
         {
-            //post that you want to subscribe on values
+            //post that we want to subscribe on values
 
             using (FormUrlEncodedContent fuec = new FormUrlEncodedContent(httpContent))
             {
