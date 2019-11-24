@@ -23,7 +23,7 @@ namespace RWS.UserServices
         }
 
 
-        public void RequestRmmp(Privilege privilege)
+        public async Task RequestRmmpAsync(Privilege privilege)
         {
 
             string method = "POST";
@@ -31,11 +31,11 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("privilege", privilege.ToString().ToLowerInvariant()) };
             Tuple<string, string>[] urlParameters = Array.Empty<Tuple<string, string>>();
 
-            Controller.Call<dynamic>(method, "users/rmmp", dataParameters, urlParameters);
+            await Controller.CallAsync<dynamic>(method, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
-        public void GrantOrDenyRmmp(long uid, Privilege privilege)
+        public async Task GrantOrDenyRmmpAsync(long uid, Privilege privilege)
         {
 
             string method = "POST";
@@ -43,11 +43,11 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("uid", uid.ToString(CultureInfo.InvariantCulture)), Tuple.Create("privilege", privilege.ToString().ToLowerInvariant()) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set") };
 
-            Controller.Call<dynamic>(method, "users/rmmp", dataParameters, urlParameters);
+            await Controller.CallAsync<dynamic>(method, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
-        public void CancelHeldOrRequestedRmmp()
+        public async Task CancelHeldOrRequestedRmmpAsync()
         {
 
             string method = "POST";
@@ -55,11 +55,11 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = Array.Empty<Tuple<string, string>>();
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "cancel") };
 
-            Controller.Call<dynamic>(method, "users/rmmp", dataParameters, urlParameters);
+            await Controller.CallAsync<dynamic>(method, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
-        public BaseResponse<GetRmmpState> GetRmmpState()
+        public async Task<BaseResponse<GetRmmpState>> GetRmmpStateAsync()
         {
 
             string method = "GET";
@@ -67,11 +67,11 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = Array.Empty<Tuple<string, string>>();
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return Controller.Call<GetRmmpState>(method, "users/rmmp", dataParameters, urlParameters);
+            return await Controller.CallAsync<GetRmmpState>(method, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
-        public void LoginAs(LoginType loginType)
+        public async Task LoginAsAsync(LoginType loginType)
         {
 
             string method = "POST";
@@ -79,19 +79,25 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("type", loginType.ToString().ToLowerInvariant()) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-locale"), Tuple.Create("json", "1") };
 
-            Controller.Call<dynamic>(method, "users", dataParameters, urlParameters);
+            await Controller.CallAsync<dynamic>(method, "users", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
-        public void RegisterUser(string username, string application, string location, LoginType ulocale)
+        public async Task RegisterUserAsync(string username, string application, string location, LoginType ulocale)
         {
 
             string method = "POST";
 
-            Tuple<string, string>[] dataParameters = { Tuple.Create("username", username), Tuple.Create("application", application), Tuple.Create("location", location), Tuple.Create("ulocale", ulocale.ToString().ToLower()) };
+            Tuple<string, string>[] dataParameters = {
+                                                       Tuple.Create("username", username),
+                                                       Tuple.Create("application", application),
+                                                       Tuple.Create("location", location),
+                                                       Tuple.Create("ulocale", ulocale.ToString().ToLower())
+                                                     };
+
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            Controller.Call<dynamic>(method, "users", dataParameters, urlParameters);
+            await Controller.CallAsync<dynamic>(method, "users", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 

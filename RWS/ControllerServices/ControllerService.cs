@@ -1,11 +1,7 @@
 ﻿using RWS.Data;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static RWS.ControllerSession;
 using static RWS.Enums;
 
 namespace RWS
@@ -24,7 +20,7 @@ namespace RWS
             IdentityOps = new IdentityOperations(Controller);
         }
 
-        public BaseResponse<ControllerResourcesState> GetControllerResources()
+        public async Task<BaseResponse<ControllerResourcesState>> GetControllerResourcesAsync()
         {
 
             string method = "GET";
@@ -32,12 +28,12 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return Controller.Call<ControllerResourcesState>(method, "ctrl", dataParameters, urlParameters);
+            return await Controller.CallAsync<ControllerResourcesState>(method, "ctrl", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
 
-        public BaseResponse<ControllerResourcesState> GetControllerActions()
+        public Task<BaseResponse<ControllerResourcesState>> GetControllerActionsAsync()
         {
 
             string method = "GET";
@@ -45,11 +41,11 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-            return Controller.Call<ControllerResourcesState>(method, "ctrl", dataParameters, urlParameters);
+            return Controller.CallAsync<ControllerResourcesState>(method, "ctrl", dataParameters, urlParameters);
 
         }
 
-        public void Restart(RestartMode restartMode)
+        public async Task RestartAsync(RestartMode restartMode)
         {
 
             string method = "POST";
@@ -58,7 +54,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = { Tuple.Create("restart-mode", rstMode) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            Controller.Call<dynamic>(method, "ctrl", dataParameters, urlParameters);
+            await Controller.CallAsync<dynamic>(method, "ctrl", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -71,7 +67,7 @@ namespace RWS
                 Controller = cs;
             }
 
-            public BaseResponse<ClockResourceState> GetClockResource()
+            public Task<BaseResponse<ClockResourceState>> GetClockResourceAsync()
             {
 
                 string method = "GET";
@@ -79,11 +75,11 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-                return Controller.Call<ClockResourceState>(method, "ctrl/clock", dataParameters, urlParameters);
+                return Controller.CallAsync<ClockResourceState>(method, "ctrl/clock", dataParameters, urlParameters);
 
             }
 
-            public BaseResponse<TimeZoneResourceState> GetTimeZoneResource()
+            public Task<BaseResponse<TimeZoneResourceState>> GetTimeZoneResourceAsync()
             {
 
                 string method = "GET";
@@ -91,11 +87,11 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-                return Controller.Call<TimeZoneResourceState>(method, "ctrl/timezone", dataParameters, urlParameters);
+                return Controller.CallAsync<TimeZoneResourceState>(method, "ctrl/timezone", dataParameters, urlParameters);
 
             }
 
-            public BaseResponse<ClockActionsState> GetClockActions()
+            public async Task<BaseResponse<ClockActionsState>> GetClockActionsAsync()
             {
 
                 string method = "GET";
@@ -103,11 +99,11 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-                return Controller.Call<ClockActionsState>(method, "ctrl/clock", dataParameters, urlParameters);
+                return await Controller.CallAsync<ClockActionsState>(method, "ctrl/clock", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
-            public BaseResponse<TimeZoneActionsState> GetTimeZoneActions()
+            public async Task<BaseResponse<TimeZoneActionsState>> GetTimeZoneActionsAsync()
             {
 
                 string method = "GET";
@@ -115,11 +111,11 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-                return Controller.Call<TimeZoneActionsState>(method, "ctrl/timezone", dataParameters, urlParameters);
+                return await Controller.CallAsync<TimeZoneActionsState>(method, "ctrl/timezone", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
-            public void SetTimeZone(string timeZone)
+            public async Task SetTimeZoneAsync(string timeZone)
             {
 
                 string method = "POST";
@@ -128,11 +124,11 @@ namespace RWS
 
                 Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-timezone"), Tuple.Create("json", "1") };
 
-                var response = Controller.Call<dynamic>(method, "ctrl/time", dataParameters, urlParameters);
+                await Controller.CallAsync<dynamic>(method, "ctrl/time", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
-            public void SetControllerClock(DateTime date)
+            public async Task SetControllerClockAsync(DateTime date)
             {
 
                 string method = "PUT";
@@ -148,12 +144,12 @@ namespace RWS
 
                 Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-                Controller.Call<dynamic>(method, "ctrl/clock", dataParameters, urlParameters);
+                await Controller.CallAsync<dynamic>(method, "ctrl/clock", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
 
-            public BaseResponse<TimeServerResourceState> GetTimeServerResource()
+            public async Task<BaseResponse<TimeServerResourceState>> GetTimeServerResourceAsync()
             {
 
                 string method = "GET";
@@ -161,11 +157,11 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-                return Controller.Call<TimeServerResourceState>(method, "ctrl/clock/timeserver", dataParameters, urlParameters);
+                return await Controller.CallAsync<TimeServerResourceState>(method, "ctrl/clock/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
-            public BaseResponse<TimeServerActionsState> GetTimeServerActions()
+            public async Task<BaseResponse<TimeServerActionsState>> GetTimeServerActionsAsync()
             {
 
                 string method = "GET";
@@ -173,12 +169,12 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-                return Controller.Call<TimeServerActionsState>(method, "ctrl/timeserver", dataParameters, urlParameters);
+                return await Controller.CallAsync<TimeServerActionsState>(method, "ctrl/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
 
-            public void SetTimeServer(string timeServer)
+            public async Task SetTimeServerAsync(string timeServer)
             {
 
                 string method = "POST";
@@ -187,7 +183,7 @@ namespace RWS
 
                 Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-timeserver"), Tuple.Create("json", "1") };
 
-                var response = Controller.Call<dynamic>(method, "ctrl/clock/timeserver", dataParameters, urlParameters);
+                await Controller.CallAsync<dynamic>(method, "ctrl/clock/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
@@ -203,7 +199,7 @@ namespace RWS
                 Controller = cs;
             }
 
-            public BaseResponse<IdentityResourceState> GetIdentityResource()
+            public async Task<BaseResponse<IdentityResourceState>> GetIdentityResourceAsync()
             {
 
                 string method = "GET";
@@ -211,11 +207,11 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-                return Controller.Call<IdentityResourceState>(method, "ctrl/identity", dataParameters, urlParameters);
+                return await Controller.CallAsync<IdentityResourceState>(method, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
-            public BaseResponse<IdentityActionsState> GetIdentityActions()
+            public async Task<BaseResponse<IdentityActionsState>> GetIdentityActionsAsync()
             {
 
                 string method = "GET";
@@ -223,11 +219,11 @@ namespace RWS
                 Tuple<string, string>[] dataParameters = null;
                 Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-                return Controller.Call<IdentityActionsState>(method, "ctrl/identity", dataParameters, urlParameters);
+                return await Controller.CallAsync<IdentityActionsState>(method, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 
-            public void SetIdentity(string controllerName, string controllerID)
+            public async Task SetIdentityAsync(string controllerName, string controllerID)
             {
 
                 string method = "PUT";
@@ -236,7 +232,7 @@ namespace RWS
 
                 Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-                var response = Controller.Call<dynamic>(method, "ctrl/identity", dataParameters, urlParameters);
+                await Controller.CallAsync<dynamic>(method, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
 
             }
 

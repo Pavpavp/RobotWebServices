@@ -13,17 +13,17 @@ namespace RWS.Tests
     {
         //Requires a running VC
         [Test]
-        public void GetIOSignals_Localhost_HasValue()
+        public async void GetIOSignals_Localhost_HasValue()
         {
             //Arrange
             ControllerSession rwsCs1 = new ControllerSession("localhost");
 
             //Act
-            var ios = rwsCs1.RobotWareService.GetIOSignals().Embedded.State;
+            var ios = await rwsCs1.RobotWareService.GetIOSignals().ConfigureAwait(false);
 
             //Assert
-            Assert.IsNotEmpty(ios);
-            Assert.IsNotNull(ios.First().LValue);
+            Assert.IsNotEmpty(ios.Embedded.State);
+            Assert.IsNotNull(ios.Embedded.State.First().LValue);
         }
     }
 }

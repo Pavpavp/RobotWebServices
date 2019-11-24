@@ -10,8 +10,6 @@ namespace RWS.RobotWareServices
 {
     public struct FileService
     {
-
-
         public ControllerSession Controller { get; set; }
 
         public FileService(ControllerSession cs)
@@ -21,7 +19,7 @@ namespace RWS.RobotWareServices
         }
 
 
-        public BaseResponse<GetDirectoryListingState> GetDirectoryListing(string path)
+        public async Task<BaseResponse<GetDirectoryListingState>> GetDirectoryListingAsync(string path)
         {
 
             string method = "GET";
@@ -29,11 +27,10 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return Controller.Call<GetDirectoryListingState>(method, "fileservice/" + path, dataParameters, urlParameters);
+            return await Controller.CallAsync<GetDirectoryListingState>(method, "fileservice/" + path, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
-
-        public dynamic UploadFile(string fromPath, string toPath, bool overwrite)
+        public async Task<dynamic> UploadFileAsync(string fromPath, string toPath, bool overwrite)
         {
 
             string method = "PUT";
@@ -41,7 +38,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create(fromPath, "") };
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return Controller.Call<dynamic>(method, "/fileservice/" + toPath, dataParameters, urlParameters);
+            return await Controller.CallAsync<dynamic>(method, "/fileservice/" + toPath, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 

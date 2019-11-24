@@ -10,7 +10,7 @@ namespace Test
 {
     class TestConsole
     {
-        static void Main(string[] args)
+        static async void Main(string[] args)
         {
             #region Find VC ports with PCSDK
             //var scanner = new NetworkScanner();
@@ -20,9 +20,9 @@ namespace Test
             #endregion
 
             ControllerSession rwsCs1 = new ControllerSession("localhost");
-            var ios = rwsCs1.RobotWareService.GetIOSignals().Embedded.State;
+            var ios = await rwsCs1.RobotWareService.GetIOSignals().ConfigureAwait(false);
 
-            var io0 = ios[0];
+            var io0 = ios.Embedded.State[0];
 
             io0.OnValueChanged += IOSignal_ValueChanged;
             Console.ReadKey();

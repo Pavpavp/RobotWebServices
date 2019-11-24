@@ -54,9 +54,9 @@ namespace RWS.SubscriptionServices
         {
             //post that you want to subscribe on values
 
-            using (FormUrlEncodedContent fued = new FormUrlEncodedContent(httpContent))
+            using (FormUrlEncodedContent fuec = new FormUrlEncodedContent(httpContent))
             {
-                var resp = await client.PostAsync(new Uri($"http://{ip}/subscription"), fued).ConfigureAwait(true);
+                var resp = await client.PostAsync(new Uri($"http://{ip}/subscription"), fuec).ConfigureAwait(true);
                 resp.EnsureSuccessStatusCode();
 
                 //Get the ABB cookie, which will be used to connect to to the websocket
