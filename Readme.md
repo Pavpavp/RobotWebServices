@@ -3,6 +3,8 @@
  - Only RobotWare 6 is currently supported
  - Many but not all calls are yet included 
  - Planning to add support for RobotWare 7 & subscriptions
+ 
+ [Robot Web Services API reference](http://developercenter.robotstudio.com/blobproxy/devcenter/Robot_Web_Services/html/index.html)
 
 ## Change log
 
