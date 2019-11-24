@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace RWS.RobotWareServices
 {
-    public struct FileService
+    public class FileService
     {
-        public ControllerSession Controller { get; set; }
+        public ControllerSession ControllerSession { get; set; }
 
         public FileService(ControllerSession cs)
         {
-            Controller = cs;
+            ControllerSession = cs;
 
         }
 
@@ -27,7 +27,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<GetDirectoryListingState>(method, "fileservice/" + path, dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<GetDirectoryListingState>(method, "fileservice/" + path, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
         public async Task<dynamic> UploadFileAsync(string fromPath, string toPath, bool overwrite)
@@ -38,7 +38,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create(fromPath, "") };
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<dynamic>(method, "/fileservice/" + toPath, dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<dynamic>(method, "/fileservice/" + toPath, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 

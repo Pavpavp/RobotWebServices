@@ -9,16 +9,13 @@ using System.Threading.Tasks;
 
 namespace RWS.RobotWareServices
 {
-    public struct RobotWareService
+    public class RobotWareService
     {
-
-
-        public ControllerSession Controller { get; set; }
+        public ControllerSession ControllerSession { get; set; }
 
         public RobotWareService(ControllerSession cs)
         {
-            Controller = cs;
-
+            ControllerSession = cs;
         }
 
         public async Task<BaseResponse<IONetworksState>> GetIONetworksAsync()
@@ -30,7 +27,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
 
-            return await Controller.CallAsync<IONetworksState>(method, "rw/iosystem/networks", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<IONetworksState>(method, "rw/iosystem/networks", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -42,7 +39,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<IONetworksState>(method, "rw/iosystem/networks/" + network, dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<IONetworksState>(method, "rw/iosystem/networks/" + network, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -54,10 +51,10 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            var ioResp = await Controller.CallAsync<IOSignalsState>(method, "rw/iosystem/signals", dataParameters, urlParameters).ConfigureAwait(false);
+            var ioResp = await ControllerSession.CallAsync<IOSignalsState>(method, "rw/iosystem/signals", dataParameters, urlParameters).ConfigureAwait(false);
 
             foreach (var ioState in ioResp.Embedded.State)
-                ioState.Controller = Controller;
+                ioState.ControllerSession = ControllerSession;
 
 
             return ioResp;
@@ -71,7 +68,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<IODevicesState>(method, "rw/iosystem/devices", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<IODevicesState>(method, "rw/iosystem/devices", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -85,7 +82,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("lvalue", lvalue) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set"), Tuple.Create("json", "1") };
 
-            await Controller.CallAsync<IODevicesState>(method, $"rw/iosystem/signals/{network}/{device}/{signal}", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync<IODevicesState>(method, $"rw/iosystem/signals/{network}/{device}/{signal}", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -97,7 +94,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("lvalue", lvalue) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set"), Tuple.Create("json", "1") };
 
-            await Controller.CallAsync<IODevicesState>(method, $"rw/iosystem/signals/{signal}", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync<IODevicesState>(method, $"rw/iosystem/signals/{signal}", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -110,7 +107,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<string>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<string>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -122,7 +119,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<List<GetMotionSystemState>>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<List<GetMotionSystemState>>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -134,7 +131,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("mechunit-name", mechUnit) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-mechunit"), Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<SetMechUnitState>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<SetMechUnitState>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -146,7 +143,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<string>(method, "rw/motionsystem/mechunits/" + mechUnit, dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<string>(method, "rw/motionsystem/mechunits/" + mechUnit, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -160,7 +157,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("mode", actDeact) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set"), Tuple.Create("json", "1") };
 
-            await Controller.CallAsync<dynamic>(method, "rw/motionsystem/mechunits/" + mechUnit, dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync<dynamic>(method, "rw/motionsystem/mechunits/" + mechUnit, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -172,7 +169,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("mechunit-name", mechUnit) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-mechunit"), Tuple.Create("json", "1") };
 
-            await Controller.CallAsync<dynamic>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync<dynamic>(method, "rw/motionsystem", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -185,7 +182,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "CalcJointsFromPose"), Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<GetJointTargetState>(method, "rw/motionsystem/mechunits/" + mechUnit + "/jointtarget", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<GetJointTargetState>(method, "rw/motionsystem/mechunits/" + mechUnit + "/jointtarget", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -196,7 +193,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("value", "2") };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set"), Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<GetJointTargetState>(method, "rw/rapid/symbol/data/RAPID/T_ROB1/user/reg1", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<GetJointTargetState>(method, "rw/rapid/symbol/data/RAPID/T_ROB1/user/reg1", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -207,7 +204,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "release"), Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<GetJointTargetState>(method, "rw/mastership/rapid", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<GetJointTargetState>(method, "rw/mastership/rapid", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -219,7 +216,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "request") };
 
-            await Controller.CallAsync<dynamic>(method, "rw/mastership", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync<dynamic>(method, "rw/mastership", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -230,7 +227,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "request") };
 
-            await Controller.CallAsync<dynamic>(method, "rw/mastership/" + domain.ToString().ToLowerInvariant(), dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync<dynamic>(method, "rw/mastership/" + domain.ToString().ToLowerInvariant(), dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -241,7 +238,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<GetJointTargetState>(method, "rw/devices/HW_DEVICES/CONTROLLER/COMPUTER_SYSTEM/", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<GetJointTargetState>(method, "rw/devices/HW_DEVICES/CONTROLLER/COMPUTER_SYSTEM/", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -264,7 +261,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("tool", tool1), Tuple.Create("wobj", wobj1), Tuple.Create("coordinate", coordinate1), Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<GetRobtargetState>(method, "rw/motionsystem/mechunits/" + mechUnit + "/robtarget", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync<GetRobtargetState>(method, "rw/motionsystem/mechunits/" + mechUnit + "/robtarget", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
     }

@@ -17,7 +17,7 @@ namespace RWS.Data
             add
             {
                 ValueChangedEventHandler += value;
-                StartSubscription(Controller, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
+                StartSubscription(ControllerSession, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
             }
             remove
             {
@@ -28,7 +28,7 @@ namespace RWS.Data
 
             }
         }
-        public ControllerSession Controller { get; set; }
+        public ControllerSession ControllerSession { get; set; }
 
         [JsonProperty(PropertyName = "_title")]
         public string Title { get; set; }
