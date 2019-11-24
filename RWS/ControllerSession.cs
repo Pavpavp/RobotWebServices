@@ -195,16 +195,11 @@ namespace RWS
                 {
                     case RequestMethod.GET:
                         break;
-                    case RequestMethod.POST:
+                    default:
                         //var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{UAS.User}:{UAS.Password}"));
                         //requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
                         requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
-                        break;
-                    case RequestMethod.PUT:
-                        break;
-                    case RequestMethod.DELETE:
-                        break;
-                    default:
+
                         break;
                 }
 
@@ -245,19 +240,16 @@ namespace RWS
 
             if (uri.EndsWith("/", StringComparison.InvariantCulture)) uri = uri.TrimEnd('/');
 
-            if (urlParameters != null)
+            StringBuilder extraParameters = new StringBuilder();
+
+            foreach (var param in urlParameters)
             {
-                StringBuilder extraParameters = new StringBuilder();
+                extraParameters.Append((extraParameters.Length == 0 ? "?" : "&") + param.Item1 + "=" + param.Item2);
+            }
 
-                foreach (var param in urlParameters)
-                {
-                    extraParameters.Append((extraParameters.Length == 0 ? "?" : "&") + param.Item1 + "=" + param.Item2);
-                }
-
-                if (extraParameters.Length > 0)
-                {
-                    uri += extraParameters.ToString();
-                }
+            if (extraParameters.Length > 0)
+            {
+                uri += extraParameters.ToString();
             }
 
             Debug.WriteLine(uri);
