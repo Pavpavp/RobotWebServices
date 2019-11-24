@@ -13,6 +13,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Linq;
+using static RWS.Enums;
 
 namespace RWS
 {
@@ -169,18 +170,18 @@ namespace RWS
         //}
 
 
-        public async Task<BaseResponse<T>> CallAsync<T>(string method, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
+        public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
         {
             Uri uri = BuildUri(domain, urlParameters);
 
-            HttpResponseMessage resp1;
-            var method1 = new HttpMethod(method);
-            using (var handler1 = new HttpClientHandler()
+            HttpResponseMessage response;
+            var method1 = new HttpMethod(requestMethod.ToString());
+            using (var handler = new HttpClientHandler()
             {
                 Credentials = new NetworkCredential(UAS.User, UAS.Password),
                 CookieContainer = CookieContainer,
             })
-            using (var client1 = new HttpClient(handler1))
+            using (var client = new HttpClient(handler))
             using (var requestMessage = new HttpRequestMessage(method1, uri))
             {
                 requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
@@ -190,23 +191,29 @@ namespace RWS
                     requestMessage.Headers.Add(header.Item1, header.Item2);
                 }
 
-                switch (method)
+                switch (requestMethod)
                 {
-                    case "POST":
+                    case RequestMethod.GET:
+                        break;
+                    case RequestMethod.POST:
                         //var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{UAS.User}:{UAS.Password}"));
                         //requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
                         requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
                         break;
-
+                    case RequestMethod.PUT:
+                        break;
+                    case RequestMethod.DELETE:
+                        break;
                     default:
                         break;
                 }
 
-                resp1 = await client1.SendAsync(requestMessage).ConfigureAwait(false);
-                resp1.EnsureSuccessStatusCode();
+
+                response = await client.SendAsync(requestMessage).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
             }
 
-            return await DeserializeJsonResponse<T>(resp1).ConfigureAwait(false);
+            return await DeserializeJsonResponse<T>(response).ConfigureAwait(false);
         }
 
         private static async Task<BaseResponse<T>> DeserializeJsonResponse<T>(HttpResponseMessage resp1)
