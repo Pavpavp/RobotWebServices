@@ -11,7 +11,9 @@ using RWS.UserServices;
 using RWS.SubscriptionServices;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Net.Http;
+using System.Collections.Generic;
 using Zeroconf;
 using System.Linq;
 
@@ -22,26 +24,23 @@ namespace RWS
     //https://learn.adafruit.com/bonjour-zeroconf-networking-for-windows-and-linux
     public class ControllerDiscovery
     {
-        private static string bonjourUrl = "_http._tcp";//,rws
+        private static string bonjourUrl = "_http._tcp.local.";//,rws
         //private static string resolvePort = "dns-sd -L "RobotWebServices_ABB_Testrack" _http._tcp";
-        public static async Task<string> Discover()
+        public static async Task<IEnumerable<IZeroconfHost>> Discover()
         {
-            ILookup<string, string> domains = await ZeroconfResolver.BrowseDomainsAsync();            
-            var responses = await ZeroconfResolver.ResolveAsync(domains.Select(g => g.Key));            
+            var serviceList = new List<IZeroconfHost>();
+            //ILookup<string, string> domains = await ZeroconfResolver.BrowseDomainsAsync();
+            //var responses = await ZeroconfResolver.ResolveAsync(domains.Select(g => g.Key));
+            // var sub = ZeroconfResolver.ResolveContinuous(bonjourUrl);
+            // var listenSubscription = sub.Subscribe(resp => Console.WriteLine(resp.ToString()));
+            var responses = await ZeroconfResolver.ResolveAsync(bonjourUrl);
+            Console.WriteLine(responses.Count());          
             foreach (var resp in responses)
+            {
                 Console.WriteLine(resp);
-            if(!responses.Any()){
-                Console.WriteLine("Nothing found!");
+                serviceList.Add(resp);
             }
-            foreach(var dom in domains){
-                 Console.WriteLine(dom.First());
-            }
-            var responses2 = await ZeroconfResolver.ResolveAsync(bonjourUrl);            
-            foreach (var resp in responses2)
-                Console.WriteLine(resp);
-           
-          
-          return "";
+            return serviceList;
         }
 
     }

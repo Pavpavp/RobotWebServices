@@ -33,9 +33,15 @@ namespace RWS_Core.Tests
 
         [Test]
         public async Task Bonjour_Test(){
-            var b = await ControllerDiscovery.Discover(); //lock thread
+            var b = await ControllerDiscovery.Discover();
+            System.Console.WriteLine("Systems:");
+            foreach (var system in b)
+            {
+                System.Console.WriteLine(string.Join(",", $"{system.DisplayName},{string.Join("-",system.IPAddresses)}"));
+                System.Console.WriteLine(string.Join(",", system.Services));
+            }
+            
             Assert.IsNotEmpty(b);
-
         }
     }
 }
