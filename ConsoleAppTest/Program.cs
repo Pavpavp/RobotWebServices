@@ -1,18 +1,20 @@
-﻿using ABB.Robotics.Controllers;
-using ABB.Robotics.Controllers.Discovery;
-using RWS;
+﻿using RWS;
 using RWS.Data;
 using RWS.SubscriptionServices;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace Test
+namespace ConsoleAppTest
 {
-    class TestConsole
+    class Program
     {
         static void Main(string[] args)
         {
+
+
             #region Find VC ports with PCSDK
             //var scanner = new NetworkScanner();
             //scanner.Scan();
@@ -20,18 +22,17 @@ namespace Test
             //var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
             #endregion
 
-            ControllerSession rwsCs1 = new ControllerSession("localhost");
+            ControllerSession rwsCs1 = new ControllerSession(new Adress("localhost:80"));
 
-            RequestRmmpAsync(rwsCs1);
+            // RequestRmmpAsync(rwsCs1);
 
-            //  var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
 
-            //var io0 = ios.Embedded.State[0];
+            var io0 = GetIOSignalsAsync(rwsCs1).Result.Embedded.State[0];
 
-            //io0.OnValueChanged += IOSignal_ValueChanged;
-            //Console.ReadKey();
+            io0.OnValueChanged += IOSignal_ValueChanged;
+            Console.ReadKey();
 
-            //io0.OnValueChanged -= IOSignal_ValueChanged;
+            io0.OnValueChanged -= IOSignal_ValueChanged;
             Console.ReadKey();
 
 
@@ -53,6 +54,11 @@ namespace Test
 
         }
 
+        private async static Task<BaseResponse<IOSignalsState>> GetIOSignalsAsync(ControllerSession rwsCs1)
+        {
+            return await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
+        }
+
         private async static void RequestRmmpAsync(ControllerSession rwsCs1)
         {
             await rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY).ConfigureAwait(false);
@@ -67,6 +73,5 @@ namespace Test
         {
             var lvalue = args.LValue;
         }
-
     }
 }

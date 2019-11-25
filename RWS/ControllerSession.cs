@@ -23,7 +23,7 @@ namespace RWS
     {
 
         const string templateUri = "{0}/{1}";
-        public string IP { get; private set; }
+        public Adress Adress { get; private set; }
         public UAS UAS { get; private set; }
         public BaseResponse<GetSystemInformationState> SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
@@ -32,9 +32,9 @@ namespace RWS
         public FileService FileService { get; set; }
         public UserService UserService { get; set; }
         public SubscriptionService SubscriptionService { get; set; }
-        public ControllerSession(string controllerIP, [Optional]UAS uas)
+        public ControllerSession(Adress ip, [Optional]UAS uas)
         {
-            IP = controllerIP;
+            Adress = ip;
 
             UAS = uas ?? new UAS("Default User", "robotics");
 
@@ -48,9 +48,9 @@ namespace RWS
             SystemInformation = RobotWareService.GetSystemInformationAsync().Result;
         }
 
-        public void Connect(string ip, UAS uas)
+        public void Connect(Adress ip, UAS uas)
         {
-            IP = ip;
+            Adress = ip;
             UAS = uas;
         }
 
@@ -60,9 +60,9 @@ namespace RWS
             HttpResponseMessage response;
             var method1 = new HttpMethod(requestMethod.ToString());
 
-            using (var handler = new HttpClientHandler() 
-            { 
-                Credentials = new NetworkCredential(UAS.User, UAS.Password), 
+            using (var handler = new HttpClientHandler()
+            {
+                Credentials = new NetworkCredential(UAS.User, UAS.Password),
                 CookieContainer = CookieContainer
             })
             {
@@ -127,7 +127,7 @@ namespace RWS
 
         private Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
         {
-            var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + IP, domain);
+            var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + Adress.Full, domain);
 
             if (uri.EndsWith("/", StringComparison.InvariantCulture)) uri = uri.TrimEnd('/');
 
@@ -160,8 +160,30 @@ namespace RWS
             User = user;
             Password = password;
         }
+
+
     }
+    public class Adress
+    {
+        public string IP { get; set; }
+        public string Port { get; set; }
+        public string Full { get; set; }
+        public Adress(string adress)
+        {
+            adress = adress?.Trim();
+
+            IP = adress;
+            Full = adress;
+
+            if (adress.Contains(':'))
+            {
+                IP = adress.Split(':')[0];
+                Port = adress.Split(':')[1];
+            }
 
 
+        }
 
+
+    }
 }
