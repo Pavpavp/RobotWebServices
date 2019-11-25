@@ -68,7 +68,6 @@ namespace RWS
 
             HttpClient client = new HttpClient(handler);
 
-            //using (var client = new HttpClient(handler))
             using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
             {
 
@@ -76,11 +75,12 @@ namespace RWS
                 {
                     requestMessage.Headers.Add(header.Item1, header.Item2);
                 }
+                requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
 
                 switch (requestMethod)
                 {
                     case RequestMethod.GET:
-                        requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
+      
                         break;
                     default:
                         if (dataParameters != null)
