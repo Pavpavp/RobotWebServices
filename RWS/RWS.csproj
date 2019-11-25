@@ -75,6 +75,7 @@
     <Compile Include="RobotWareServices\StateData\GetMotionSystemState.cs" />
     <Compile Include="RobotWareServices\StateData\GetRobtargetState.cs" />
     <Compile Include="Misc\Enums.cs" />
+    <Compile Include="RobotWareServices\StateData\GetSystemInformationState.cs" />
     <Compile Include="RobotWareServices\StateData\SetMechUnitState.cs" />
     <Compile Include="SubscriptionServices\EventArgs.cs" />
     <Compile Include="SubscriptionServices\SubscriptionEventHelper.cs" />

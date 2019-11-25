@@ -20,15 +20,18 @@ namespace Test
             #endregion
 
             ControllerSession rwsCs1 = new ControllerSession("localhost");
-            var ios = rwsCs1.RobotWareService.GetIOSignals().Embedded.State;
+            RequestRmmpAsync(rwsCs1);
 
-            var io0 = ios[0];
+            //  var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
 
-            io0.OnValueChanged += IOSignal_ValueChanged;
+            //var io0 = ios.Embedded.State[0];
+
+            //io0.OnValueChanged += IOSignal_ValueChanged;
+            //Console.ReadKey();
+
+            //io0.OnValueChanged -= IOSignal_ValueChanged;
             Console.ReadKey();
 
-            io0.OnValueChanged -= IOSignal_ValueChanged;
-            Console.ReadKey();
 
             //"/rw/panel/opmode"
             //"/rw/elog/0"
@@ -47,6 +50,12 @@ namespace Test
 
 
         }
+
+        private async static void RequestRmmpAsync(ControllerSession rwsCs1)
+        {
+            await rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY).ConfigureAwait(false);
+        }
+
         private static void IOSignal_ValueChanged(object sender, IOEventArgs args)
         {
             var lvalue = args.LValue;

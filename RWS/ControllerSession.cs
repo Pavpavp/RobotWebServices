@@ -12,6 +12,9 @@ using RWS.SubscriptionServices;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Linq;
+using static RWS.Enums;
+using System.Net.Http.Headers;
 
 namespace RWS
 {
@@ -21,6 +24,7 @@ namespace RWS
         const string templateUri = "{0}/{1}";
         public string IP { get; private set; }
         public UAS UAS { get; private set; }
+        public dynamic SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public ControllerService ControllerService { get; set; }
         public RobotWareService RobotWareService { get; set; }
@@ -39,6 +43,8 @@ namespace RWS
             FileService = new FileService(this);
             SubscriptionService = new SubscriptionService(this);
             UserService = new UserService(this);
+
+            SystemInformation = RobotWareService.GetSystemInformationAsync().Result;
         }
 
         public void Connect(string ip, UAS uas)
@@ -47,61 +53,50 @@ namespace RWS
             UAS = uas;
         }
 
-        public BaseResponse<T> Call<T>(string method, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters)
+        public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
         {
 
-            var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + IP, domain);
-
-            if (uri.EndsWith("/", StringComparison.InvariantCulture)) uri = uri.TrimEnd('/');
-
-            if (urlParameters != null && urlParameters.Length > 0)
+            HttpResponseMessage response;
+            var method1 = new HttpMethod(requestMethod.ToString());
+            using (var handler = new HttpClientHandler()
             {
-                StringBuilder extraParameters = new StringBuilder();
-
-                foreach (var item in urlParameters)
-                {
-                    extraParameters.Append((extraParameters.Length == 0 ? "?" : "&") + item.Item1 + "=" + item.Item2);
-                }
-
-                if (extraParameters.Length > 0)
-                {
-                    uri += extraParameters.ToString();
-                }
-            }
-
-            Debug.WriteLine(uri);
-
-            if(method == "GET")
-            {
-                return CallWithJsonAsync<T>(new Uri(uri), method, dataParameters).Result; //blocking wait here
-            }
-            else
-            {
-                return CallWithJson<T>(new Uri(uri), method, dataParameters);
-            }
-
-        }
-
-        public async Task<BaseResponse<T>> CallWithJsonAsync<T>(Uri uri, string method, Tuple<string, string>[] dataParameters, params Tuple<string, string>[] headers)
-        {
-            HttpResponseMessage resp1;
-            var method1 = new HttpMethod(method);
-            using (var handler1 = new HttpClientHandler() {
                 Credentials = new NetworkCredential(UAS.User, UAS.Password),
                 CookieContainer = CookieContainer,
             })
-            using (var client1 = new HttpClient(handler1))
-            using (var requestMessage = new HttpRequestMessage(method1, uri))
+            using (var client = new HttpClient(handler))
+            using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
             {
+                requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
+
+
                 foreach (var header in headers)
                 {
                     requestMessage.Headers.Add(header.Item1, header.Item2);
                 }
-                requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
 
-                resp1 = await client1.SendAsync(requestMessage).ConfigureAwait(false);
+                switch (requestMethod)
+                {
+                    case RequestMethod.GET:
+                        break;
+                    default:
+                        if (dataParameters != null)
+                        {
+                            requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
+                            requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        }
+                        break;
+                }
+
+
+                response = await client.SendAsync(requestMessage).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
             }
 
+            return await DeserializeJsonResponse<T>(response).ConfigureAwait(false);
+        }
+
+        private static async Task<BaseResponse<T>> DeserializeJsonResponse<T>(HttpResponseMessage resp1)
+        {
             using (var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(false)))
             {
                 var content = sr.ReadToEnd();
@@ -111,108 +106,39 @@ namespace RWS
             }
         }
 
-        public BaseResponse<T> CallWithJson<T>(Uri uri, string method, Tuple<string, string>[] dataParameters, params Tuple<string, string>[] headers)
+        private static string BuildDataParameters(Tuple<string, string>[] dataParameters)
         {
-            var request = WebRequest.CreateHttp(uri);
+            StringBuilder combinedParams = new StringBuilder();
 
-            request.Credentials = new NetworkCredential(UAS.User, UAS.Password);
-
-            if (CookieContainer != null)
-                request.CookieContainer = CookieContainer;
-
-            foreach (var header in headers)
+            foreach (var param in dataParameters)
             {
-                request.Headers.Add(header.Item1, header.Item2);
+                combinedParams.Append((param.Item1 == dataParameters[0].Item1 ? "" : "&") + param.Item1 + "=" + param.Item2);
             }
 
-            request.Proxy = null;
-            request.Method = method;
-            //   request.PreAuthenticate = true;
-            request.ContentType = "application/x-www-form-urlencoded";
-
-
-            if (dataParameters != null && dataParameters.Length > 0 && method != "GET")
-            {
-                StringBuilder combinedParams = new StringBuilder();
-
-                foreach (var item in dataParameters)
-                {
-                    combinedParams.Append((item.Item1 == dataParameters[0].Item1 ? "" : "&") + item.Item1 + "=" + item.Item2);
-                }
-
-                Stream stream = request.GetRequestStream();
-
-                if (method == "PUT")
-                {
-                    using (FileStream fs = File.OpenRead(combinedParams.ToString().Split('=')[0]))
-                    {
-                        using (BinaryReader br = new BinaryReader(fs))
-                        {
-                            byte[] bb = br.ReadBytes((int)fs.Length);
-                            stream.Write(bb, 0, bb.Length);
-                        }
-                    }
-                }
-                else
-                    stream.Write(Encoding.ASCII.GetBytes(combinedParams.ToString()), 0, combinedParams.ToString().Length);
-
-                stream.Close();
-            }
-
-            using (var httpResponse = (HttpWebResponse)request.GetResponse())
-            {
-                string cookieHeader = httpResponse.Headers[HttpResponseHeader.SetCookie];
-
-                if (cookieHeader != null)
-                {
-                    CookieContainer.SetCookies(new Uri("http://" + IP), cookieHeader);
-                }
-
-                //if (httpResponse.StatusCode == HttpStatusCode.OK)
-                //{
-
-                using (var sr = new StreamReader(httpResponse.GetResponseStream()))
-                {
-
-                    var content = sr.ReadToEnd();
-
-                    BaseResponse<T> jsonResponse = default;
-
-                    jsonResponse = JsonConvert.DeserializeObject<BaseResponse<T>>(content);
-
-                    return jsonResponse;
-
-                }
-                //   }
-
-            }
+            return combinedParams.ToString();
         }
 
-        private static string GetDebugCallDetails(string uri)
+        private Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
         {
-            StringBuilder sb = new StringBuilder();
-            var u = new Uri(uri);
-            sb.Append(u.AbsolutePath);
-            if (u.Query.StartsWith("?", StringComparison.InvariantCulture))
+            var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + IP, domain);
+
+            if (uri.EndsWith("/", StringComparison.InvariantCulture)) uri = uri.TrimEnd('/');
+
+            StringBuilder extraParameters = new StringBuilder();
+
+            foreach (var param in urlParameters)
             {
-                var queryParameters = u.Query.Substring(1).Split('&');
-                foreach (var p in queryParameters)
-                {
-
-                    var kv = p.Split('=');
-                    if (kv.Length == 2)
-                    {
-                        if (sb.Length != 0)
-                        {
-                            sb.Append(", ");
-                        }
-
-                        sb.Append(kv[0]).Append(" = ").Append(kv[1]);
-                    }
-
-                }
+                extraParameters.Append((extraParameters.Length == 0 ? "?" : "&") + param.Item1 + "=" + param.Item2);
             }
-            return sb.ToString();
+
+            if (extraParameters.Length > 0)
+            {
+                uri += extraParameters.ToString();
+            }
+
+            Debug.WriteLine(uri);
+
+            return new Uri(uri);
         }
 
     }
