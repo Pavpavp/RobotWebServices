@@ -161,10 +161,15 @@ namespace RWS
 
 
     }
+
     public class Address
     {
         public string IP { get; set; }
         public string Port { get; set; }
+
+        /// <summary>
+        /// IP and port separated by ':' if they were declared
+        /// </summary>
         public string Full { get; set; }
         public Address(string address)
         {
