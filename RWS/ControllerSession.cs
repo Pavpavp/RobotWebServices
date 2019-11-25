@@ -168,7 +168,7 @@ namespace RWS
         public string Port { get; set; }
 
         /// <summary>
-        /// IP and port separated by ':' if they were declared
+        /// IP and port separated by ':' 
         /// </summary>
         public string Full { get; set; }
         public Address(string address)
