@@ -60,46 +60,44 @@ namespace RWS
             HttpResponseMessage response;
             var method1 = new HttpMethod(requestMethod.ToString());
 
-            using (var handler = new HttpClientHandler()
+            var handler = new HttpClientHandler()
             {
                 Credentials = new NetworkCredential(UAS.User, UAS.Password),
                 CookieContainer = CookieContainer
-            })
+            };
+
+            HttpClient client = new HttpClient(handler);
+
+            //using (var client = new HttpClient(handler))
+            using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
             {
 
-                HttpClient client = new HttpClient(handler);
-
-                //using (var client = new HttpClient(handler))
-                using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
+                foreach (var header in headers)
                 {
-
-                    foreach (var header in headers)
-                    {
-                        requestMessage.Headers.Add(header.Item1, header.Item2);
-                    }
-
-                    switch (requestMethod)
-                    {
-                        case RequestMethod.GET:
-                            requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
-                            break;
-                        default:
-                            if (dataParameters != null)
-                            {
-                                requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
-                                requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                            }
-                            break;
-                    }
-
-
-                    response = await client.SendAsync(requestMessage).ConfigureAwait(false);
-                    response.EnsureSuccessStatusCode();
-
+                    requestMessage.Headers.Add(header.Item1, header.Item2);
                 }
+
+                switch (requestMethod)
+                {
+                    case RequestMethod.GET:
+                        requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
+                        break;
+                    default:
+                        if (dataParameters != null)
+                        {
+                            requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
+                            requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        }
+                        break;
+                }
+
+                response = await client.SendAsync(requestMessage).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
 
                 return await DeserializeJsonResponse<T>(response).ConfigureAwait(true);
             }
+
+      
         }
 
         private static async Task<BaseResponse<T>> DeserializeJsonResponse<T>(HttpResponseMessage resp1)
