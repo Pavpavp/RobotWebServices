@@ -11,10 +11,40 @@ using RWS.UserServices;
 using RWS.SubscriptionServices;
 using System.Globalization;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Net.Http;
+using System.Collections.Generic;
+using Zeroconf;
+using System.Linq;
 
 namespace RWS
 {
+    //requires bonjour discovery deamon to run on the VC - computer
+    //Download Bonjour Print Services for Windows v2.0.2 https://support.apple.com/kb/DL999?locale=en_US
+    //https://learn.adafruit.com/bonjour-zeroconf-networking-for-windows-and-linux
+    public class ControllerDiscovery
+    {
+        private static string bonjourUrl = "_http._tcp.local.";//,rws
+        //private static string resolvePort = "dns-sd -L "RobotWebServices_ABB_Testrack" _http._tcp";
+        public static async Task<IEnumerable<IZeroconfHost>> Discover()
+        {
+            var serviceList = new List<IZeroconfHost>();
+            //ILookup<string, string> domains = await ZeroconfResolver.BrowseDomainsAsync();
+            //var responses = await ZeroconfResolver.ResolveAsync(domains.Select(g => g.Key));
+            // var sub = ZeroconfResolver.ResolveContinuous(bonjourUrl);
+            // var listenSubscription = sub.Subscribe(resp => Console.WriteLine(resp.ToString()));
+            var responses = await ZeroconfResolver.ResolveAsync(bonjourUrl);
+            Console.WriteLine(responses.Count());          
+            foreach (var resp in responses)
+            {
+                Console.WriteLine(resp);
+                serviceList.Add(resp);
+            }
+            return serviceList;
+        }
+
+    }
+
     public partial class ControllerSession
     {
 
