@@ -10,7 +10,7 @@ namespace Test
 {
     class TestConsole
     {
-        static async void Main(string[] args)
+        static void Main(string[] args)
         {
             #region Find VC ports with PCSDK
             //var scanner = new NetworkScanner();
@@ -20,14 +20,16 @@ namespace Test
             #endregion
 
             ControllerSession rwsCs1 = new ControllerSession("localhost");
-            var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
+            RequestRmmpAsync(rwsCs1);
 
-            var io0 = ios.Embedded.State[0];
+            //  var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
 
-            io0.OnValueChanged += IOSignal_ValueChanged;
-            Console.ReadKey();
+            //var io0 = ios.Embedded.State[0];
 
-            io0.OnValueChanged -= IOSignal_ValueChanged;
+            //io0.OnValueChanged += IOSignal_ValueChanged;
+            //Console.ReadKey();
+
+            //io0.OnValueChanged -= IOSignal_ValueChanged;
             Console.ReadKey();
 
 
@@ -48,6 +50,12 @@ namespace Test
 
 
         }
+
+        private async static void RequestRmmpAsync(ControllerSession rwsCs1)
+        {
+            await rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY).ConfigureAwait(false);
+        }
+
         private static void IOSignal_ValueChanged(object sender, IOEventArgs args)
         {
             var lvalue = args.LValue;

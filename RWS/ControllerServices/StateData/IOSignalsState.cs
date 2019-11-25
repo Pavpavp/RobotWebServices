@@ -17,7 +17,7 @@ namespace RWS.Data
             add
             {
                 ValueChangedEventHandler += value;
-                StartSubscription(ControllerSession, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
+                StartSubscriptionAsync(ControllerSession, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
             }
             remove
             {
