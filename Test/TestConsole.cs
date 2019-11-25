@@ -5,6 +5,7 @@ using RWS.Data;
 using RWS.SubscriptionServices;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Test
 {
@@ -20,6 +21,7 @@ namespace Test
             #endregion
 
             ControllerSession rwsCs1 = new ControllerSession("localhost");
+
             RequestRmmpAsync(rwsCs1);
 
             //  var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
@@ -54,6 +56,11 @@ namespace Test
         private async static void RequestRmmpAsync(ControllerSession rwsCs1)
         {
             await rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY).ConfigureAwait(false);
+            var rmmpState = await rwsCs1.UserService.GetRmmpStateAsync().ConfigureAwait(false);
+            await rwsCs1.UserService.RegisterUserAsync("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL).ConfigureAwait(false);
+            await rwsCs1.UserService.GrantOrDenyRmmpAsync(rmmpState.Embedded.State.First().UserID, Enums.Privilege.MODIFY).ConfigureAwait(false);
+
+            ;
         }
 
         private static void IOSignal_ValueChanged(object sender, IOEventArgs args)

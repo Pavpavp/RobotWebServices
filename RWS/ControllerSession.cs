@@ -15,6 +15,7 @@ using System.Net.Http;
 using System.Linq;
 using static RWS.Enums;
 using System.Net.Http.Headers;
+using RWS.RobotWareServices.StateData;
 
 namespace RWS
 {
@@ -24,7 +25,7 @@ namespace RWS
         const string templateUri = "{0}/{1}";
         public string IP { get; private set; }
         public UAS UAS { get; private set; }
-        public dynamic SystemInformation { get; set; }
+        public BaseResponse<GetSystemInformationState> SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public ControllerService ControllerService { get; set; }
         public RobotWareService RobotWareService { get; set; }
@@ -58,46 +59,52 @@ namespace RWS
 
             HttpResponseMessage response;
             var method1 = new HttpMethod(requestMethod.ToString());
-            using (var handler = new HttpClientHandler()
-            {
-                Credentials = new NetworkCredential(UAS.User, UAS.Password),
-                CookieContainer = CookieContainer,
+
+            using (var handler = new HttpClientHandler() 
+            { 
+                Credentials = new NetworkCredential(UAS.User, UAS.Password), 
+                CookieContainer = CookieContainer
             })
-            using (var client = new HttpClient(handler))
-            using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
             {
-                requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
 
+                HttpClient client = new HttpClient(handler);
 
-                foreach (var header in headers)
+                //using (var client = new HttpClient(handler))
+                using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
                 {
-                    requestMessage.Headers.Add(header.Item1, header.Item2);
+
+                    foreach (var header in headers)
+                    {
+                        requestMessage.Headers.Add(header.Item1, header.Item2);
+                    }
+
+                    switch (requestMethod)
+                    {
+                        case RequestMethod.GET:
+                            requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
+                            break;
+                        default:
+                            if (dataParameters != null)
+                            {
+                                requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
+                                requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                            }
+                            break;
+                    }
+
+
+                    response = await client.SendAsync(requestMessage).ConfigureAwait(false);
+                    response.EnsureSuccessStatusCode();
+
                 }
 
-                switch (requestMethod)
-                {
-                    case RequestMethod.GET:
-                        break;
-                    default:
-                        if (dataParameters != null)
-                        {
-                            requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
-                            requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                        }
-                        break;
-                }
-
-
-                response = await client.SendAsync(requestMessage).ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
+                return await DeserializeJsonResponse<T>(response).ConfigureAwait(true);
             }
-
-            return await DeserializeJsonResponse<T>(response).ConfigureAwait(false);
         }
 
         private static async Task<BaseResponse<T>> DeserializeJsonResponse<T>(HttpResponseMessage resp1)
         {
-            using (var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(false)))
+            using (var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(true)))
             {
                 var content = sr.ReadToEnd();
                 BaseResponse<T> jsonResponse = default;
