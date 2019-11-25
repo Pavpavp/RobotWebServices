@@ -39,7 +39,7 @@ namespace RWS.SubscriptionServices
                             { "1-p", Prio.ToString(CultureInfo.InvariantCulture) }
                         };
 
-                    await SocketThreadAsync(client, cs.Adress.IP, httpContent, cs.UAS).ConfigureAwait(true);
+                    await SocketThreadAsync(client, cs.Address.IP, httpContent, cs.UAS).ConfigureAwait(true);
 
                 }
             }

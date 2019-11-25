@@ -23,7 +23,7 @@ namespace RWS
     {
 
         const string templateUri = "{0}/{1}";
-        public Adress Adress { get; private set; }
+        public Address Address { get; private set; }
         public UAS UAS { get; private set; }
         public BaseResponse<GetSystemInformationState> SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
@@ -32,9 +32,9 @@ namespace RWS
         public FileService FileService { get; set; }
         public UserService UserService { get; set; }
         public SubscriptionService SubscriptionService { get; set; }
-        public ControllerSession(Adress ip, [Optional]UAS uas)
+        public ControllerSession(Address ip, [Optional]UAS uas)
         {
-            Adress = ip;
+            Address = ip;
 
             UAS = uas ?? new UAS("Default User", "robotics");
 
@@ -48,9 +48,9 @@ namespace RWS
             SystemInformation = RobotWareService.GetSystemInformationAsync().Result;
         }
 
-        public void Connect(Adress ip, UAS uas)
+        public void Connect(Address ip, UAS uas)
         {
-            Adress = ip;
+            Address = ip;
             UAS = uas;
         }
 
@@ -127,7 +127,7 @@ namespace RWS
 
         private Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
         {
-            var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + Adress.Full, domain);
+            var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + Address.Full, domain);
 
             if (uri.EndsWith("/", StringComparison.InvariantCulture)) uri = uri.TrimEnd('/');
 
@@ -163,22 +163,22 @@ namespace RWS
 
 
     }
-    public class Adress
+    public class Address
     {
         public string IP { get; set; }
         public string Port { get; set; }
         public string Full { get; set; }
-        public Adress(string adress)
+        public Address(string address)
         {
-            adress = adress?.Trim();
+            address = address?.Trim();
 
-            IP = adress;
-            Full = adress;
+            IP = address;
+            Full = address;
 
-            if (adress.Contains(':'))
+            if (address.Contains(':'))
             {
-                IP = adress.Split(':')[0];
-                Port = adress.Split(':')[1];
+                IP = address.Split(':')[0];
+                Port = address.Split(':')[1];
             }
 
 

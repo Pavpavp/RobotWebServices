@@ -22,26 +22,23 @@ namespace ConsoleAppTest
             //var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
             #endregion
 
-            ControllerSession rwsCs1 = new ControllerSession(new Adress("localhost:80"));
+            ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
 
-            // RequestRmmpAsync(rwsCs1);
+            RequestRmmpAsync(rwsCs1);
 
 
-            var io0 = GetIOSignalsAsync(rwsCs1).Result.Embedded.State[0];
+            //var io0 = GetIOSignalsAsync(rwsCs1).Result.Embedded.State[0];
 
-            io0.OnValueChanged += IOSignal_ValueChanged;
+            //io0.OnValueChanged += IOSignal_ValueChanged;
             Console.ReadKey();
 
-            io0.OnValueChanged -= IOSignal_ValueChanged;
-            Console.ReadKey();
+            //io0.OnValueChanged -= IOSignal_ValueChanged;
+            //Console.ReadKey();
 
 
             //"/rw/panel/opmode"
             //"/rw/elog/0"
-            //rwsCs1.UserService.RequestRmmp(Enums.Privilege.MODIFY);
-            //var rmmpState = rwsCs1.UserService.GetRmmpState();
-            //rwsCs1.UserService.RegisterUser("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL);
-            //rwsCs1.UserService.GrantOrDenyRmmp(rmmpState.Embedded.State.First().UserID, Enums.Privilege.MODIFY);
+
             //rwsCs1.RobotWareService.MastershipRequest();
             //rwsCs1.UserService.CancelHeldOrRequestedRmmp();
             //rwsCs1.ControllerService.Restart(Enums.RestartMode.RESTART);
