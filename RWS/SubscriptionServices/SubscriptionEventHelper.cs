@@ -22,7 +22,7 @@ namespace RWS.SubscriptionServices
         private int Prio { get; set; } = 1;
 
 
-        public async void StartSubscription(ControllerSession cs, string resource)
+        public async void StartSubscriptionAsync(ControllerSession cs, string resource)
         {
             using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(cs?.UAS.User, cs?.UAS.Password) })
             {
@@ -31,27 +31,25 @@ namespace RWS.SubscriptionServices
 
                 using (HttpClient client = new HttpClient(handler))
                 {
-                    using (CancellationTokenSource cancelToken = new CancellationTokenSource())
-                    {
-                        var httpContent = new Dictionary<string, string>
+
+                    var httpContent = new Dictionary<string, string>
                         {
                             { "resources", "1" },
                             { "1", resource },
                             { "1-p", Prio.ToString(CultureInfo.InvariantCulture) }
                         };
 
+                    await SocketThreadAsync(client, cs.IP, httpContent, cs.UAS).ConfigureAwait(true);
 
-                        await SocketThreadAsync(client, cs.IP, httpContent, cs.UAS, cancelToken.Token).ConfigureAwait(true);
-
-                    }
                 }
             }
+
         }
 
-        private async Task SocketThreadAsync(HttpClient client, string ip, Dictionary<string, string> httpContent, UAS uas, CancellationToken cancelToken)
+        private async Task SocketThreadAsync(HttpClient client, string ip, Dictionary<string, string> httpContent, UAS uas)
         {
             //post that we want to subscribe on values
-
+            using (CancellationTokenSource cancelToken = new CancellationTokenSource())
             using (FormUrlEncodedContent fuec = new FormUrlEncodedContent(httpContent))
             {
                 var resp = await client.PostAsync(new Uri($"http://{ip}/subscription"), fuec).ConfigureAwait(true);
@@ -75,7 +73,7 @@ namespace RWS.SubscriptionServices
                     wSock.Options.AddSubProtocol("robapi2_subscription");
 
                     //Connect
-                    await wSock.ConnectAsync(new Uri($"ws://{ip}/poll"), cancelToken).ConfigureAwait(true);
+                    await wSock.ConnectAsync(new Uri($"ws://{ip}/poll"), cancelToken.Token).ConfigureAwait(true);
                     var bArr = new byte[1024];
                     ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
 
@@ -85,7 +83,7 @@ namespace RWS.SubscriptionServices
                     {
                         try
                         {
-                            var res = await wSock.ReceiveAsync(arr, cancelToken).ConfigureAwait(true);
+                            var res = await wSock.ReceiveAsync(arr, cancelToken.Token).ConfigureAwait(true);
 
                             if (ValueChangedEventHandler == null)
                                 break;
@@ -106,8 +104,6 @@ namespace RWS.SubscriptionServices
                     }
                 }
             }
-
         }
-
     }
 }
