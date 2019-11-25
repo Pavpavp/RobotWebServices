@@ -13,11 +13,11 @@ namespace RWS.SubscriptionServices
 {
     public class SubscriptionService
     {
-        public ControllerSession Controller { get; set; }
+        public ControllerSession ControllerSession { get; set; }
 
         public SubscriptionService(ControllerSession cs)
         {
-            Controller = cs;
+            ControllerSession = cs;
         }
 
 

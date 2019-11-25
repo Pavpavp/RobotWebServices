@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RWS.Data
 {
-    public class IOSignalsState : SubscriptionEventHelper
+    public class IOSignalState : SubscriptionEventHelper
     {
 
         public event ValueChangedIOEventHandler OnValueChanged
@@ -17,7 +17,7 @@ namespace RWS.Data
             add
             {
                 ValueChangedEventHandler += value;
-                StartSubscription(ControllerSession, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
+                StartSubscription(Controller, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
             }
             remove
             {
@@ -28,7 +28,8 @@ namespace RWS.Data
 
             }
         }
-        public ControllerSession ControllerSession { get; set; }
+
+        public ControllerSession Controller { get; set; }
 
         [JsonProperty(PropertyName = "_title")]
         public string Title { get; set; }

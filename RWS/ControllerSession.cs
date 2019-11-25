@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Linq;
 using static RWS.Enums;
-using System.Net.Http.Headers;
 
 namespace RWS
 {
@@ -24,7 +23,6 @@ namespace RWS
         const string templateUri = "{0}/{1}";
         public string IP { get; private set; }
         public UAS UAS { get; private set; }
-        public dynamic SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public ControllerService ControllerService { get; set; }
         public RobotWareService RobotWareService { get; set; }
@@ -43,8 +41,6 @@ namespace RWS
             FileService = new FileService(this);
             SubscriptionService = new SubscriptionService(this);
             UserService = new UserService(this);
-
-            SystemInformation = RobotWareService.GetSystemInformationAsync().Result;
         }
 
         public void Connect(string ip, UAS uas)
@@ -55,6 +51,7 @@ namespace RWS
 
         public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
         {
+            Uri uri = BuildUri(domain, urlParameters);
 
             HttpResponseMessage response;
             var method1 = new HttpMethod(requestMethod.ToString());
@@ -64,10 +61,9 @@ namespace RWS
                 CookieContainer = CookieContainer,
             })
             using (var client = new HttpClient(handler))
-            using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
+            using (var requestMessage = new HttpRequestMessage(method1, uri))
             {
                 requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
-
 
                 foreach (var header in headers)
                 {
@@ -79,11 +75,10 @@ namespace RWS
                     case RequestMethod.GET:
                         break;
                     default:
-                        if (dataParameters != null)
-                        {
-                            requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
-                            requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                        }
+                        //var base64authorization = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{UAS.User}:{UAS.Password}"));
+                        //requestMessage.Headers.TryAddWithoutValidation("Authorization", $"Basic {base64authorization}");
+                        requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
+
                         break;
                 }
 

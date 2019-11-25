@@ -69,6 +69,14 @@ namespace RWS
 
         }
 
+        public enum RequestMethod
+        {
+            GET,
+            POST,
+            PUT,
+            DELETE
+        }
+
         public enum MastershipDomain
         {
             CFG,
