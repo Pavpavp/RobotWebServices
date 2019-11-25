@@ -48,20 +48,17 @@ namespace RWS.SubscriptionServices
 
         private async Task SocketThreadAsync(HttpClient client, string ip, Dictionary<string, string> httpContent, UAS uas)
         {
-            //post that we want to subscribe on values
+
             using (CancellationTokenSource cancelToken = new CancellationTokenSource())
             using (FormUrlEncodedContent fuec = new FormUrlEncodedContent(httpContent))
             {
                 var resp = await client.PostAsync(new Uri($"http://{ip}/subscription"), fuec).ConfigureAwait(true);
                 resp.EnsureSuccessStatusCode();
 
-                //Get the ABB cookie, which will be used to connect to to the websocket
                 var header = resp.Headers.FirstOrDefault(p => p.Key == "Set-Cookie");
                 var val = header.Value.Last();
                 string abbCookie = val.Split('=')[1].Split(';')[0];
 
-
-                //Setup the websocket connection
                 using (ClientWebSocket wSock = new ClientWebSocket())
                 {
                     wSock.Options.Credentials = new NetworkCredential(uas.User, uas.Password);
@@ -72,7 +69,6 @@ namespace RWS.SubscriptionServices
                     wSock.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(5000);
                     wSock.Options.AddSubProtocol("robapi2_subscription");
 
-                    //Connect
                     await wSock.ConnectAsync(new Uri($"ws://{ip}/poll"), cancelToken.Token).ConfigureAwait(true);
                     var bArr = new byte[1024];
                     ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
@@ -88,7 +84,6 @@ namespace RWS.SubscriptionServices
                             if (ValueChangedEventHandler == null)
                                 break;
 
-                            //parse message
                             var s = Encoding.ASCII.GetString(arr.Array);
 
                             s = s.Split(new string[] { "lvalue\">" }, StringSplitOptions.None)[1].Split('<')[0].Trim();
