@@ -74,9 +74,7 @@ namespace RWS
             GET,
             POST,
             PUT,
-            DELETE,
-
-
+            DELETE
         }
 
         public enum MastershipDomain
