@@ -13,10 +13,10 @@ namespace RWS.Tests
     {
         //Requires a running VC
         [Test]
-        public async void GetIOSignals_Localhost_HasValue()
+        public async Task GetIOSignals_Localhost_HasValue()
         {
             //Arrange
-            ControllerSession rwsCs1 = new ControllerSession("localhost");
+            ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
 
             //Act
             var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
