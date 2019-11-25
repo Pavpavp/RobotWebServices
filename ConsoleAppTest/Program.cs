@@ -13,8 +13,11 @@ namespace ConsoleAppTest
     {
         static void Main(string[] args)
         {
+            MainAsync();
+        }
 
-
+        private async static void MainAsync()
+        {
             #region Find VC ports with PCSDK
             //var scanner = new NetworkScanner();
             //scanner.Scan();
@@ -24,7 +27,14 @@ namespace ConsoleAppTest
 
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
 
-            RequestRmmpAsync(rwsCs1);
+            await rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY).ConfigureAwait(false);
+            var rmmpState = await rwsCs1.UserService.GetRmmpStateAsync().ConfigureAwait(false);
+            await rwsCs1.UserService.RegisterUserAsync("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL).ConfigureAwait(false);
+            await rwsCs1.UserService.GrantOrDenyRmmpAsync(rmmpState.Embedded.State.First().UserID, Enums.Privilege.MODIFY).ConfigureAwait(false);
+            //rwsCs1.RobotWareService.MastershipRequest();
+            //rwsCs1.UserService.CancelHeldOrRequestedRmmp();
+            //rwsCs1.ControllerService.Restart(Enums.RestartMode.RESTART);
+
 
 
             //var io0 = GetIOSignalsAsync(rwsCs1).Result.Embedded.State[0];
@@ -36,18 +46,10 @@ namespace ConsoleAppTest
             //Console.ReadKey();
 
 
-            //"/rw/panel/opmode"
-            //"/rw/elog/0"
-
-            //rwsCs1.RobotWareService.MastershipRequest();
-            //rwsCs1.UserService.CancelHeldOrRequestedRmmp();
-            //rwsCs1.ControllerService.Restart(Enums.RestartMode.RESTART);
 
             //rwsCs1.RobotWareService.SetMechunitForJogging("ROB_R");
             //var sdf = rwsCs1.RobotWareService.GetMotionSystem();
             //rwsCs.FileService.UploadFile(@"C:/Users/SEPARIA/Downloads/Sync14050W.pgf", "$home/Sync14050W.pgf", true);  //Replace with your paths
-
-
 
         }
 
@@ -58,10 +60,7 @@ namespace ConsoleAppTest
 
         private async static void RequestRmmpAsync(ControllerSession rwsCs1)
         {
-            await rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY).ConfigureAwait(false);
-            var rmmpState = await rwsCs1.UserService.GetRmmpStateAsync().ConfigureAwait(false);
-            await rwsCs1.UserService.RegisterUserAsync("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL).ConfigureAwait(false);
-            await rwsCs1.UserService.GrantOrDenyRmmpAsync(rmmpState.Embedded.State.First().UserID, Enums.Privilege.MODIFY).ConfigureAwait(false);
+
 
             ;
         }
