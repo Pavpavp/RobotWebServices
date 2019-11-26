@@ -1,4 +1,6 @@
-﻿using RWS;
+﻿using ABB.Robotics.Controllers;
+using ABB.Robotics.Controllers.Discovery;
+using RWS;
 using RWS.Data;
 using RWS.SubscriptionServices;
 using System;
@@ -19,15 +21,16 @@ namespace ConsoleAppTest
         private async static void MainAsync()
         {
             #region Find VC ports with PCSDK
-            //var scanner = new NetworkScanner();
-            //scanner.Scan();
-            //ControllerInfoCollection controllers = scanner.Controllers;
-            //var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
+            var scanner = new NetworkScanner();
+            scanner.Scan();
+            ControllerInfoCollection controllers = scanner.Controllers;
+            var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
             #endregion
 
-            ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
+            ControllerSession rwsCs1 = new ControllerSession(new Address("localhost"));
+            var dev = rwsCs1.RobotWareService.GetIOdevicesAsync().Result;
 
-            //await rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY).ConfigureAwait(false);
+          //  rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY);
             //var rmmpState = await rwsCs1.UserService.GetRmmpStateAsync().ConfigureAwait(false);
             //await rwsCs1.UserService.RegisterUserAsync("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL).ConfigureAwait(false);
             //await rwsCs1.UserService.GrantOrDenyRmmpAsync(rmmpState.Embedded.State.First().UserID, Enums.Privilege.MODIFY).ConfigureAwait(false);
