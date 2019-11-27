@@ -30,7 +30,10 @@ namespace ConsoleAppTest
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost"));
             var dev = rwsCs1.RobotWareService.GetIOdevicesAsync().Result;
 
-          //  rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY);
+  
+
+
+            //  rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY);
             //var rmmpState = await rwsCs1.UserService.GetRmmpStateAsync().ConfigureAwait(false);
             //await rwsCs1.UserService.RegisterUserAsync("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL).ConfigureAwait(false);
             //await rwsCs1.UserService.GrantOrDenyRmmpAsync(rmmpState.Embedded.State.First().UserID, Enums.Privilege.MODIFY).ConfigureAwait(false);
@@ -55,6 +58,7 @@ namespace ConsoleAppTest
             //rwsCs.FileService.UploadFile(@"C:/Users/SEPARIA/Downloads/Sync14050W.pgf", "$home/Sync14050W.pgf", true);  //Replace with your paths
 
         }
+
 
         private static void IOSignal_ValueChanged(object sender, IOEventArgs args)
         {
