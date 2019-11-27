@@ -88,6 +88,7 @@ namespace RWS
                                 //requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
                                 //requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
                                 requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, "application/x-www-form-urlencoded");
+
                             }
                             break;
                     }
