@@ -15,7 +15,21 @@ namespace ConsoleAppTest
     {
         static void Main(string[] args)
         {
+            Bonjour_Test();
             MainAsync();
+
+        }
+
+        private async static void Bonjour_Test()
+        {
+            var b = ControllerDiscovery.Discover().Result;
+
+            ;
+            //foreach (var system in b)
+            //{
+            //    Console.WriteLine(string.Join(",", $"{system.DisplayName},{string.Join("-", system.IPAddresses)}"));
+            //    Console.WriteLine(string.Join(",", system.Services));
+            //}
         }
 
         private async static void MainAsync()
@@ -27,10 +41,12 @@ namespace ConsoleAppTest
             var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
             #endregion
 
+
+
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost"));
             var dev = rwsCs1.RobotWareService.GetIOdevicesAsync().Result;
 
-  
+
 
 
             //  rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY);
