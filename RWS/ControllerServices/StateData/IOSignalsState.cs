@@ -9,20 +9,23 @@ using System.Threading.Tasks;
 
 namespace RWS.Data
 {
-    public class IOSignalsState : SubscriptionEventHelper
+    public class IOSignalsState : SubscriptionEventHelper<IOEventArgs, int>
     {
 
         public event ValueChangedIOEventHandler OnValueChanged
         {
             add
             {
+                var ioEventArgs = new IOEventArgs();
+
                 ValueChangedEventHandler += value;
-                StartSubscriptionAsync(ControllerSession, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
+                StartSubscriptionAsync(ControllerSession, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"), ioEventArgs);
             }
             remove
             {
                 SubscriptionSockets[value].Abort();
                 SubscriptionSockets.Remove(value);
+
 
                 ValueChangedEventHandler -= value;
 

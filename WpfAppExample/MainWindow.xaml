@@ -1,0 +1,17 @@
+﻿<Window x:Class="WpfAppExample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppExample"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <ComboBox HorizontalAlignment="Left" Margin="49,98,0,0" VerticalAlignment="Top" Width="179" IsEditable="True" Height="29"/>
+        <Label Content="Controller info" HorizontalAlignment="Left" Margin="290,10,0,0" VerticalAlignment="Top" Height="24" Width="157"/>
+        <Button Content="Scan for controllers" HorizontalAlignment="Left" Margin="49,50,0,0" VerticalAlignment="Top" Height="26" Width="109"/>
+        <Button Content="Subscribe to operating mode" HorizontalAlignment="Left" Margin="33,241,0,0" VerticalAlignment="Top" Height="46" Width="183"/>
+        <Label Content="Operating mode" HorizontalAlignment="Left" Margin="61,292,0,0" VerticalAlignment="Top"/>
+
+    </Grid>
+</Window>

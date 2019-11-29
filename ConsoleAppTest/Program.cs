@@ -44,7 +44,7 @@ namespace ConsoleAppTest
 
 
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost"));
-            var dev = rwsCs1.RobotWareService.GetIOdevicesAsync().Result;
+           // var dev = rwsCs1.RobotWareService.GetIODevicesAsync().Result;
 
 
 
@@ -78,7 +78,7 @@ namespace ConsoleAppTest
 
         private static void IOSignal_ValueChanged(object sender, IOEventArgs args)
         {
-            var lvalue = args.LValue;
+            var lvalue = args.ValueChanged;
         }
     }
 }

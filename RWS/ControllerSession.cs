@@ -28,7 +28,8 @@ namespace RWS
     public static class ControllerDiscovery
     {
         private static string bonjourUrl = "_http._tcp.local.";//,rws
-        //private static string resolvePort = "dns-sd -L "RobotWebServices_ABB_Testrack" _http._tcp";
+        private static string bonjourUrl2 = "_http._tcp.";
+      //  private static string resolvePort = "dns-sd -L "RobotWebServices_ABB_Testrack" _http._tcp";
         public static async Task<IEnumerable<IZeroconfHost>> Discover()
         {
             var serviceList = new List<IZeroconfHost>();
@@ -36,7 +37,7 @@ namespace RWS
             //var responses = await ZeroconfResolver.ResolveAsync(domains.Select(g => g.Key));
             // var sub = ZeroconfResolver.ResolveContinuous(bonjourUrl);
             // var listenSubscription = sub.Subscribe(resp => Console.WriteLine(resp.ToString()));
-            var responses = await ZeroconfResolver.ResolveAsync(bonjourUrl);
+            var responses = await ZeroconfResolver.ResolveAsync(bonjourUrl).ConfigureAwait(false);
 
 
             foreach (var resp in responses)

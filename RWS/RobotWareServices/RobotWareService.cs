@@ -65,7 +65,7 @@ namespace RWS.RobotWareServices
             return ioResp;
         }
 
-        public async Task<BaseResponse<IODevicesState>> GetIOdevicesAsync()
+        public async Task<BaseResponse<IODevicesState>> GetIODevicesAsync()
         {
 
             Tuple<string, string>[] dataParameters = null;
