@@ -12,6 +12,7 @@
         <Button Content="Scan for controllers" HorizontalAlignment="Left" Margin="49,50,0,0" VerticalAlignment="Top" Height="26" Width="109"/>
         <Button Content="Subscribe to operating mode" HorizontalAlignment="Left" Margin="33,241,0,0" VerticalAlignment="Top" Height="46" Width="183"/>
         <Label Content="Operating mode" HorizontalAlignment="Left" Margin="61,292,0,0" VerticalAlignment="Top"/>
+        <CheckBox Name="CheckBox_sig" Content="CheckBox" HorizontalAlignment="Left" Margin="329,105,0,0" VerticalAlignment="Top" />
 
     </Grid>
 </Window>

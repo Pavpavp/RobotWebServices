@@ -41,10 +41,10 @@ namespace ConsoleAppTest
             var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
             #endregion
 
-
+            var sdf = ControllerDiscovery.Discover();
 
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost"));
-           // var dev = rwsCs1.RobotWareService.GetIODevicesAsync().Result;
+            // var dev = rwsCs1.RobotWareService.GetIODevicesAsync().Result;
 
 
 

@@ -6,4 +6,18 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Zeroconf" Version="3.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RWS\RWS.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ABB.Robotics.Controllers.PC">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\ABB\RobotStudio 2019\Bin\ABB.Robotics.Controllers.PC.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

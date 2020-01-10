@@ -19,14 +19,14 @@ namespace RWS.RobotWareServices
             ControllerSession = cs;
         }
 
-        public async Task<BaseResponse<GetSystemInformationState>> GetSystemInformationAsync()
+        public async Task<BaseResponse7<SystemInformationState7>> GetSystemInformationAsync()
         {
 
             Tuple<string, string>[] dataParameters = null;
-            Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
+            //Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
+            Tuple<string, string>[] urlParameters = null;
 
-
-            return await ControllerSession.CallAsync<GetSystemInformationState>(RequestMethod.GET, "rw/system", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.Call7Async<SystemInformationState7>(RequestMethod.GET, "rw/system", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
