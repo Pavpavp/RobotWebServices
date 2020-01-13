@@ -3,14 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29318.209
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RWS", "RWS\RWS.csproj", "{2A0646C3-0E5E-441E-9768-CE8453F1E312}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RWS.Tests", "RWS.Tests\RWS.Tests.csproj", "{8D23FD98-DD94-4DE2-8313-F533959297E8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppExample", "WpfAppExample\WpfAppExample.csproj", "{F103AC2A-B644-4EBA-8EF9-85A16AEC5419}"
-	ProjectSection(ProjectDependencies) = postProject
-		{2A0646C3-0E5E-441E-9768-CE8453F1E312} = {2A0646C3-0E5E-441E-9768-CE8453F1E312}
-	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RobotWebServices", "RobotWebServices\RobotWebServices.csproj", "{B2DBBD1E-124A-40D2-B4FF-8D2EEF6FFC7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobotWebServices.Tests", "RobotWebServices.Tests\RobotWebServices.Tests.csproj", "{EC4F1006-8F64-40A1-8972-73559A75A4AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,17 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2A0646C3-0E5E-441E-9768-CE8453F1E312}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2A0646C3-0E5E-441E-9768-CE8453F1E312}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2A0646C3-0E5E-441E-9768-CE8453F1E312}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8D23FD98-DD94-4DE2-8313-F533959297E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8D23FD98-DD94-4DE2-8313-F533959297E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8D23FD98-DD94-4DE2-8313-F533959297E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8D23FD98-DD94-4DE2-8313-F533959297E8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F103AC2A-B644-4EBA-8EF9-85A16AEC5419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F103AC2A-B644-4EBA-8EF9-85A16AEC5419}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F103AC2A-B644-4EBA-8EF9-85A16AEC5419}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F103AC2A-B644-4EBA-8EF9-85A16AEC5419}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2DBBD1E-124A-40D2-B4FF-8D2EEF6FFC7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2DBBD1E-124A-40D2-B4FF-8D2EEF6FFC7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2DBBD1E-124A-40D2-B4FF-8D2EEF6FFC7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2DBBD1E-124A-40D2-B4FF-8D2EEF6FFC7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC4F1006-8F64-40A1-8972-73559A75A4AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC4F1006-8F64-40A1-8972-73559A75A4AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC4F1006-8F64-40A1-8972-73559A75A4AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC4F1006-8F64-40A1-8972-73559A75A4AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

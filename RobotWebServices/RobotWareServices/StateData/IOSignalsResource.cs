@@ -9,41 +9,45 @@ using System.Threading.Tasks;
 
 namespace RWS.Data
 {
-    public class IOSignalState : SubscriptionEventHelper
+    public class IOSignalsResource : SubscriptionEventHelper<IOEventArgs, int>
     {
 
         public event ValueChangedIOEventHandler OnValueChanged
         {
             add
             {
+                var ioEventArgs = new IOEventArgs();
+
                 ValueChangedEventHandler += value;
-                StartSubscription(Controller, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"));
+                StartSubscription7Async(ControllerSession, $"/rw/iosystem/{Links.Self.Href};state", ioEventArgs);
             }
             remove
             {
                 SubscriptionSockets[value].Abort();
                 SubscriptionSockets.Remove(value);
 
+
                 ValueChangedEventHandler -= value;
 
             }
         }
 
-        public ControllerSession Controller { get; set; }
-
-        [JsonProperty(PropertyName = "_title")]
-        public string Title { get; set; }
-
         [JsonProperty(PropertyName = "_links")]
-        public _Links1 Links { get; set; }
-        public string Name { get; set; }
+        public _LinksRes7 Links { get; set; }
 
         [JsonProperty(PropertyName = "_type")]
         public string Type { get; set; }
-        public string Category { get; set; }
-        public int LValue { get; set; }
-        public string LState { get; set; }
+        [JsonProperty(PropertyName = "_title")]
+        public string Title { get; set; }
 
+        public string Name { get; set; }
+        public string Category { get; set; }
+        public string LValue { get; set; }
+        public string LState { get; set; }
     }
+
+
+
+
 
 }

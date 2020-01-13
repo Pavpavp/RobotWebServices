@@ -65,6 +65,21 @@ namespace RWS.RobotWareServices
             return ioResp;
         }
 
+        public async Task<BaseResponse7<IOSignalsResource>> GetIOSignals7Async()
+        {
+
+            Tuple<string, string>[] dataParameters = null;
+            Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
+
+            var ioResp = await ControllerSession.Call7Async<IOSignalsResource>(RequestMethod.GET, "rw/iosystem/signals", dataParameters, urlParameters).ConfigureAwait(false);
+
+            foreach (var res in ioResp.Embedded.Resources)
+                res.ControllerSession = ControllerSession;
+
+
+            return ioResp;
+        }
+
         public async Task<BaseResponse<IODevicesState>> GetIODevicesAsync()
         {
 

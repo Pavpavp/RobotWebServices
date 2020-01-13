@@ -29,7 +29,7 @@ namespace RWS
     //https://learn.adafruit.com/bonjour-zeroconf-networking-for-windows-and-linux
     public static class ControllerDiscovery
     {
-        private const string bonjourUrl = "dns-sd -B _http._tcp,rws";
+        private const string bonjourUrl = "_http._tcp,rws";
 
         //  private static string resolvePort = "dns-sd -L "RobotWebServices_ABB_Testrack" _http._tcp";
         public static async Task<List<IZeroconfHost>> Discover()
@@ -121,7 +121,7 @@ namespace RWS
                             {
                                 //requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
                                 //requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                                requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, "application/hal+json;v=2.0");
+                                requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, "application/x-www-form-urlencoded;v=2.0");
 
                             }
                             break;
@@ -210,7 +210,7 @@ namespace RWS
             }
         }
 
-        private static string BuildDataParameters(Tuple<string, string>[] dataParameters)
+        public static string BuildDataParameters(Tuple<string, string>[] dataParameters)
         {
             StringBuilder combinedParams = new StringBuilder();
 

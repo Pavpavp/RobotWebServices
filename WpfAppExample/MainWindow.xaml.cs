@@ -1,21 +1,10 @@
-﻿using ABB.Robotics.Controllers;
-using ABB.Robotics.Controllers.Discovery;
-using RWS;
+﻿using RWS;
 using RWS.SubscriptionServices;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace WpfAppExample
 {
@@ -32,35 +21,21 @@ namespace WpfAppExample
             Main();
 
 
-
-
-
         }
 
         private async void Main()
         {
 
-            //#region Find VC ports with PCSDK
-            //var scanner = new NetworkScanner();
-            //scanner.Scan();
-            //ControllerInfoCollection controllers = scanner.Controllers;
-            //var vcPorts = controllers.Where(c => c.IsVirtual).Select(c => c.WebServicesPort);
-            //#endregion
-
-
-            var sdf = await ControllerDiscovery.Discover();
-
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
 
+            var ios = rwsCs1.RobotWareService.GetIOSignals7Async().Result;
 
-            var io0 = rwsCs1.RobotWareService.GetIOSignalsAsync().Result;
+            var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
-            io0.Embedded.State.FirstOrDefault(io => io.Name == "doSigTest").OnValueChanged += IOSignal_ValueChanged;
-
-
-
+            io.OnValueChanged += IOSignal_ValueChanged;
 
 
+            ;
 
 
 

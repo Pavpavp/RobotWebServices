@@ -44,7 +44,7 @@ namespace RWS.Data
 
     public class _Embedded7<T>
     {
-        public Resource7[] Resources { get; set; }
+        public T[] Resources { get; set; }
     }
 
     public class Resource7
