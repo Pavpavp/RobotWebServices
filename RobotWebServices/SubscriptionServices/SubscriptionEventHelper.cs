@@ -31,7 +31,6 @@ namespace RWS.SubscriptionServices
             ControllerSession = cs;
 
 
-
             using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(cs?.UAS.User, cs?.UAS.Password) })
             {
                 handler.Proxy = null;   // disable the proxy, the controller is connected on same subnet as the PC 
@@ -90,41 +89,103 @@ namespace RWS.SubscriptionServices
         private async Task SocketThread7Async(HttpClient client, HttpContent httpContent, T eventArgs)
         {
 
+            using CancellationTokenSource cancelToken = new CancellationTokenSource();
 
+            var resp = await client.PostAsync(new Uri($"https://{ControllerSession.Address.Full}/subscription"), httpContent).ConfigureAwait(true);
+            resp.EnsureSuccessStatusCode();
 
+            var header = resp.Headers.FirstOrDefault(p => p.Key == "Set-Cookie");
 
+            string abbCookie = header.Value.Last().Split('=')[1].Split(';')[0];
 
-            using (CancellationTokenSource cancelToken = new CancellationTokenSource())
+            string sessionCookie = header.Value.First().Split(':')[0].Split('=')[1];
+
+            using ClientWebSocket wSock = new ClientWebSocket();
+
+            wSock.Options.Credentials = new NetworkCredential(ControllerSession.UAS.User, ControllerSession.UAS.Password);
+
+            wSock.Options.Proxy = null;
+
+            CookieContainer cc = new CookieContainer();
+
+            cc.Add(new Uri($"https://{ControllerSession.Address.Full}"), new Cookie("ABBCX", abbCookie, "/", ControllerSession.Address.IP));
+
+            cc.Add(new Uri($"https://{ControllerSession.Address.Full}"), new Cookie("-http-session-", sessionCookie, "/", ControllerSession.Address.IP));
+
+            wSock.Options.Cookies = cc;
+
+            wSock.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
+
+            wSock.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(5000);
+
+            wSock.Options.AddSubProtocol("rws_subscription");
+
+            await wSock.ConnectAsync(new Uri($"wss://{ControllerSession.Address.Full}/poll"), cancelToken.Token).ConfigureAwait(true);
+
+            var bArr = new byte[1024];
+            ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
+
+            SubscriptionSockets.Add(ValueChangedEventHandler, wSock);
+
+            while (ValueChangedEventHandler != null)
             {
-                var resp = await client.PostAsync(new Uri($"https://{ControllerSession.Address.Full}/subscription"), httpContent).ConfigureAwait(true);
-                resp.EnsureSuccessStatusCode();
+                try
+                {
+                    var res = await wSock.ReceiveAsync(arr, cancelToken.Token).ConfigureAwait(true);
 
-                var header = resp.Headers.FirstOrDefault(p => p.Key == "Set-Cookie");
+                    if (ValueChangedEventHandler == null)
+                        break;
 
-                string abbCookie = header.Value.Last().Split('=')[1].Split(';')[0];
-                string sessionCookie = header.Value.First().Split(':')[0].Split('=')[1];
+                    var s = Encoding.ASCII.GetString(arr.Array);
 
-                using ClientWebSocket wSock = new ClientWebSocket();
+                    eventArgs.SetValueChanged(s);
+                    ValueChangedEventHandler(this, eventArgs);
+
+                }
+                catch (Exception ex)
+                {
+                    if (ex is WebSocketException && wSock.State == WebSocketState.Aborted)
+                        break;
+                }
+            }
+        }
+
+        private async Task SocketThreadAsync(HttpClient client, Dictionary<string, string> httpContent, T eventArgs)
+        {
+
+            using CancellationTokenSource cancelToken = new CancellationTokenSource();
+
+            using FormUrlEncodedContent fuec = new FormUrlEncodedContent(httpContent);
+
+            var resp = await client.PostAsync(new Uri($"http://{ControllerSession.Address.IP}/subscription"), fuec).ConfigureAwait(true);
+
+            resp.EnsureSuccessStatusCode();
+
+            var header = resp.Headers.FirstOrDefault(p => p.Key == "Set-Cookie");
+
+            var val = header.Value.Last();
+
+            string abbCookie = val.Split('=')[1].Split(';')[0];
+
+            using (ClientWebSocket wSock = new ClientWebSocket())
+            {
                 wSock.Options.Credentials = new NetworkCredential(ControllerSession.UAS.User, ControllerSession.UAS.Password);
 
                 wSock.Options.Proxy = null;
 
                 CookieContainer cc = new CookieContainer();
 
-                cc.Add(new Uri($"https://{ControllerSession.Address.Full}"), new Cookie("ABBCX", abbCookie, "/", ControllerSession.Address.IP));
-                cc.Add(new Uri($"https://{ControllerSession.Address.Full}"), new Cookie("-http-session-", sessionCookie, "/", ControllerSession.Address.IP));
+                cc.Add(new Uri($"http://{ControllerSession.Address.IP}"), new Cookie("ABBCX", abbCookie, "/", ControllerSession.Address.IP));
 
                 wSock.Options.Cookies = cc;
 
-                wSock.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
-
                 wSock.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(5000);
 
-                wSock.Options.AddSubProtocol("rws_subscription");
+                wSock.Options.AddSubProtocol("robapi2_subscription");
 
-                await wSock.ConnectAsync(new Uri($"wss://{ControllerSession.Address.Full}/poll"), cancelToken.Token).ConfigureAwait(true);
-
+                await wSock.ConnectAsync(new Uri($"ws://{ControllerSession.Address.IP}/poll"), cancelToken.Token).ConfigureAwait(true);
                 var bArr = new byte[1024];
+
                 ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
 
                 SubscriptionSockets.Add(ValueChangedEventHandler, wSock);
@@ -148,61 +209,6 @@ namespace RWS.SubscriptionServices
                     {
                         if (ex is WebSocketException && wSock.State == WebSocketState.Aborted)
                             break;
-                    }
-                }
-
-            }
-        }
-
-        private async Task SocketThreadAsync(HttpClient client, Dictionary<string, string> httpContent, T eventArgs)
-        {
-
-            using (CancellationTokenSource cancelToken = new CancellationTokenSource())
-            using (FormUrlEncodedContent fuec = new FormUrlEncodedContent(httpContent))
-            {
-                var resp = await client.PostAsync(new Uri($"http://{ControllerSession.Address.IP}/subscription"), fuec).ConfigureAwait(true);
-                resp.EnsureSuccessStatusCode();
-
-                var header = resp.Headers.FirstOrDefault(p => p.Key == "Set-Cookie");
-                var val = header.Value.Last();
-                string abbCookie = val.Split('=')[1].Split(';')[0];
-
-                using (ClientWebSocket wSock = new ClientWebSocket())
-                {
-                    wSock.Options.Credentials = new NetworkCredential(ControllerSession.UAS.User, ControllerSession.UAS.Password);
-                    wSock.Options.Proxy = null;
-                    CookieContainer cc = new CookieContainer();
-                    cc.Add(new Uri($"http://{ControllerSession.Address.IP}"), new Cookie("ABBCX", abbCookie, "/", ControllerSession.Address.IP));
-                    wSock.Options.Cookies = cc;
-                    wSock.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(5000);
-                    wSock.Options.AddSubProtocol("robapi2_subscription");
-
-                    await wSock.ConnectAsync(new Uri($"ws://{ControllerSession.Address.IP}/poll"), cancelToken.Token).ConfigureAwait(true);
-                    var bArr = new byte[1024];
-                    ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
-
-                    SubscriptionSockets.Add(ValueChangedEventHandler, wSock);
-
-                    while (ValueChangedEventHandler != null)
-                    {
-                        try
-                        {
-                            var res = await wSock.ReceiveAsync(arr, cancelToken.Token).ConfigureAwait(true);
-
-                            if (ValueChangedEventHandler == null)
-                                break;
-
-                            var s = Encoding.ASCII.GetString(arr.Array);
-
-                            eventArgs.SetValueChanged(s);
-                            ValueChangedEventHandler(this, eventArgs);
-
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex is WebSocketException && wSock.State == WebSocketState.Aborted)
-                                break;
-                        }
                     }
                 }
             }

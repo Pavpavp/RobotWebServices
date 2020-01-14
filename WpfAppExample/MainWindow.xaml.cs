@@ -25,6 +25,7 @@ namespace WpfAppExample
 
         private async void Main()
         {
+            //Testing with RWS 2.0 with RW7
 
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
 

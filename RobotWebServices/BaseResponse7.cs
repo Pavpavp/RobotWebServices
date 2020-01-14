@@ -9,14 +9,14 @@ namespace RWS.Data
 {
 
 
-    public class BaseResponse7<T>
+    public class BaseResponse7<TRes, TState>
     {
         [JsonProperty(PropertyName = "_links")]
         public _Links7 Links { get; set; }
 
         [JsonProperty(PropertyName = "_embedded")]
-        public _Embedded7<T> Embedded { get; set; }
-        public T[] State { get; set; }
+        public _Embedded7<TRes> Embedded { get; set; }
+        public TState[] State { get; set; }
 
     }
 
@@ -28,7 +28,6 @@ namespace RWS.Data
 
     public class _LinksRes7
     {
-        //public Base7 Base { get; set; }
         public Self7 Self { get; set; }
     }
 
@@ -42,9 +41,9 @@ namespace RWS.Data
         public string Href { get; set; }
     }
 
-    public class _Embedded7<T>
+    public class _Embedded7<TRes>
     {
-        public T[] Resources { get; set; }
+        public TRes[] Resources { get; set; }
     }
 
     public class Resource7

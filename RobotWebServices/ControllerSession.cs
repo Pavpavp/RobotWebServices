@@ -57,7 +57,7 @@ namespace RWS
         const string templateUri = "{0}/{1}";
         public Address Address { get; private set; }
         public UAS UAS { get; private set; }
-        public BaseResponse7<SystemInformationState7> SystemInformation { get; set; }
+        public BaseResponse7<Resource7, SystemInformationState7> SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public ControllerService ControllerService { get; set; }
         public RobotWareService RobotWareService { get; set; }
@@ -86,53 +86,51 @@ namespace RWS
             UAS = uas;
         }
 
-        public async Task<BaseResponse7<T>> Call7Async<T>(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
+        public async Task<BaseResponse7<TRes, TState>> Call7Async<TRes, TState>(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
         {
 
             HttpResponseMessage response;
             var method1 = new HttpMethod(requestMethod.ToString());
 
-            using (var handler = new HttpClientHandler()
+            using var handler = new HttpClientHandler()
             {
                 Credentials = new NetworkCredential(UAS.User, UAS.Password),
                 UseCookies = true,
                 UseProxy = false,
                 CookieContainer = CookieContainer,
                 ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; }
-            })
+            };
+
+
+            using HttpClient client = new HttpClient(handler);
+            using var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters));
+
+            foreach (var header in headers)
+                requestMessage.Headers.Add(header.Item1, header.Item2);
+
+            requestMessage.Headers.Accept.ParseAdd("application/hal+json;v=2.0");
+
+            switch (requestMethod)
             {
-                using (HttpClient client = new HttpClient(handler))
-                using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
-                {
+                case RequestMethod.GET:
 
-                    foreach (var header in headers)
-                        requestMessage.Headers.Add(header.Item1, header.Item2);
 
-                    requestMessage.Headers.Accept.ParseAdd("application/hal+json;v=2.0");
-
-                    switch (requestMethod)
+                    break;
+                default:
+                    if (dataParameters != null)
                     {
-                        case RequestMethod.GET:
+                        //requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
+                        //requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, "application/x-www-form-urlencoded;v=2.0");
 
-
-                            break;
-                        default:
-                            if (dataParameters != null)
-                            {
-                                //requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
-                                //requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                                requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, "application/x-www-form-urlencoded;v=2.0");
-
-                            }
-                            break;
                     }
-
-                    response = await client.SendAsync(requestMessage).ConfigureAwait(false);
-                    response.EnsureSuccessStatusCode();
-
-                    return await DeserializeJsonResponse7<T>(response).ConfigureAwait(true);
-                }
+                    break;
             }
+
+            response = await client.SendAsync(requestMessage).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+
+            return await DeserializeJsonResponse7<TRes, TState>(response).ConfigureAwait(true);
 
         }
 
@@ -143,71 +141,63 @@ namespace RWS
             HttpResponseMessage response;
             var method1 = new HttpMethod(requestMethod.ToString());
 
-            using (var handler = new HttpClientHandler()
+            using var handler = new HttpClientHandler()
             {
                 Credentials = new NetworkCredential(UAS.User, UAS.Password),
                 CookieContainer = CookieContainer
-            })
+            };
+            using HttpClient client = new HttpClient(handler);
+            using var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters));
+            foreach (var header in headers)
             {
-
-                using (HttpClient client = new HttpClient(handler))
-                using (var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters)))
-                {
-
-                    foreach (var header in headers)
-                    {
-                        requestMessage.Headers.Add(header.Item1, header.Item2);
-                    }
-                    requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
-
-
-
-                    switch (requestMethod)
-                    {
-                        case RequestMethod.GET:
-
-
-                            break;
-                        default:
-                            if (dataParameters != null)
-                            {
-                                //requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
-                                //requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                                requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, "application/x-www-form-urlencoded");
-
-                            }
-                            break;
-                    }
-
-                    response = await client.SendAsync(requestMessage).ConfigureAwait(false);
-                    response.EnsureSuccessStatusCode();
-
-                    return await DeserializeJsonResponse<T>(response).ConfigureAwait(true);
-                }
+                requestMessage.Headers.Add(header.Item1, header.Item2);
             }
+            requestMessage.Headers.Accept.ParseAdd("application/x-www-form-urlencoded");
+
+
+
+            switch (requestMethod)
+            {
+                case RequestMethod.GET:
+
+
+                    break;
+                default:
+                    if (dataParameters != null)
+                    {
+                        //requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
+                        //requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+                        requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, "application/x-www-form-urlencoded");
+
+                    }
+                    break;
+            }
+
+            response = await client.SendAsync(requestMessage).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+
+            return await DeserializeJsonResponse<T>(response).ConfigureAwait(true);
 
         }
 
-        private static async Task<BaseResponse7<T>> DeserializeJsonResponse7<T>(HttpResponseMessage resp1)
+        private static async Task<BaseResponse7<TRes, TState>> DeserializeJsonResponse7<TRes, TState>(HttpResponseMessage resp1)
         {
-            using (var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(true)))
-            {
-                var content = sr.ReadToEnd();
-                BaseResponse7<T> jsonResponse = default;
-                jsonResponse = JsonConvert.DeserializeObject<BaseResponse7<T>>(content);
-                return jsonResponse;
-            }
+            using var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(true));
+
+            var content = sr.ReadToEnd();
+            BaseResponse7<TRes, TState> jsonResponse = default;
+            jsonResponse = JsonConvert.DeserializeObject<BaseResponse7<TRes, TState>>(content);
+            return jsonResponse;
         }
 
         private static async Task<BaseResponse<T>> DeserializeJsonResponse<T>(HttpResponseMessage resp1)
         {
-            using (var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(true)))
-            {
-                var content = sr.ReadToEnd();
-                BaseResponse<T> jsonResponse = default;
-                jsonResponse = JsonConvert.DeserializeObject<BaseResponse<T>>(content);
-                return jsonResponse;
-            }
+            using var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(true));
+
+            var content = sr.ReadToEnd();
+            BaseResponse<T> jsonResponse = default;
+            jsonResponse = JsonConvert.DeserializeObject<BaseResponse<T>>(content);
+            return jsonResponse;
         }
 
         public static string BuildDataParameters(Tuple<string, string>[] dataParameters)

@@ -19,14 +19,14 @@ namespace RWS.RobotWareServices
             ControllerSession = cs;
         }
 
-        public async Task<BaseResponse7<SystemInformationState7>> GetSystemInformationAsync()
+        public async Task<BaseResponse7<Resource7, SystemInformationState7>> GetSystemInformationAsync()
         {
 
             Tuple<string, string>[] dataParameters = null;
             //Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
             Tuple<string, string>[] urlParameters = null;
 
-            return await ControllerSession.Call7Async<SystemInformationState7>(RequestMethod.GET, "rw/system", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.Call7Async<Resource7, SystemInformationState7>(RequestMethod.GET, "rw/system", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -65,13 +65,13 @@ namespace RWS.RobotWareServices
             return ioResp;
         }
 
-        public async Task<BaseResponse7<IOSignalsResource>> GetIOSignals7Async()
+        public async Task<BaseResponse7<IOSignalsResource, Resource7>> GetIOSignals7Async()
         {
 
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            var ioResp = await ControllerSession.Call7Async<IOSignalsResource>(RequestMethod.GET, "rw/iosystem/signals", dataParameters, urlParameters).ConfigureAwait(false);
+            var ioResp = await ControllerSession.Call7Async<IOSignalsResource, Resource7>(RequestMethod.GET, "rw/iosystem/signals", dataParameters, urlParameters).ConfigureAwait(false);
 
             foreach (var res in ioResp.Embedded.Resources)
                 res.ControllerSession = ControllerSession;
