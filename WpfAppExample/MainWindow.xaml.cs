@@ -25,24 +25,24 @@ namespace WpfAppExample
 
         private async void Main()
         {
-            //Testing RWS 2.0 with RW7
+            //Testing RWS2.0 with RW7
+
+            //var ctrls = ControllerDiscovery.Discover();
 
             ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
 
-            var ios = rwsCs1.RobotWareService.GetIOSignals7Async().Result;
+            //var ios = rwsCs1.RobotWareService.GetIOSignals7Async().Result;
 
-            var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
+            //var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
-            io.OnValueChanged += IOSignal_ValueChanged;
+            //io.OnValueChanged += IOSignal_ValueChanged;
 
 
+
+
+             var dev = await rwsCs1.RobotWareService.GetIODevicesAsync();
+            var dev2 = await rwsCs1.RobotWareService.GetIODevicesAsync();
             ;
-
-
-
-            // var dev = rwsCs1.RobotWareService.GetIODevicesAsync().Result;
-
-
 
 
             //  rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY);

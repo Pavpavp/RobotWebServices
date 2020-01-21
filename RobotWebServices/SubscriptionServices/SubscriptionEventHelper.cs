@@ -35,6 +35,7 @@ namespace RWS.SubscriptionServices
             {
                 handler.Proxy = null;   // disable the proxy, the controller is connected on same subnet as the PC 
                 handler.UseProxy = false;
+                handler.CookieContainer = ControllerSession.CookieContainer;
 
                 handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
 
@@ -68,6 +69,7 @@ namespace RWS.SubscriptionServices
 
                 handler.Proxy = null;   // disable the proxy, the controller is connected on same subnet as the PC 
                 handler.UseProxy = false;
+                handler.CookieContainer = ControllerSession.CookieContainer;
 
                 using (HttpClient client = new HttpClient(handler))
                 {

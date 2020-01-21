@@ -29,23 +29,22 @@ namespace RWS
     //https://learn.adafruit.com/bonjour-zeroconf-networking-for-windows-and-linux
     public static class ControllerDiscovery
     {
-        private const string bonjourUrl = "_http._tcp,rws";
 
         //  private static string resolvePort = "dns-sd -L "RobotWebServices_ABB_Testrack" _http._tcp";
         public static async Task<List<IZeroconfHost>> Discover()
         {
             var serviceList = new List<IZeroconfHost>();
-            //ILookup<string, string> domains = await ZeroconfResolver.BrowseDomainsAsync().ConfigureAwait(false);
-            //var responses2 = await ZeroconfResolver.ResolveAsync(domains.Select(g => g.Key)).ConfigureAwait(false);
-            //var sub = ZeroconfResolver.ResolveContinuous(bonjourUrl);
-            //var listenSubscription = sub.Subscribe(resp => Console.WriteLine(resp.ToString()));
-            var responses = await ZeroconfResolver.ResolveAsync(bonjourUrl).ConfigureAwait(false);
-
+            ILookup<string, string> domains = await ZeroconfResolver.BrowseDomainsAsync().ConfigureAwait(false);
+            var responses = await ZeroconfResolver.ResolveAsync(domains.Select(g => g.Key)).ConfigureAwait(false);
 
             foreach (var resp in responses)
-            {
                 serviceList.Add(resp);
-            }
+
+            var results = await ZeroconfResolver.ResolveAsync("_http._tcp.local.");
+
+
+            ;
+
             return serviceList;
         }
 
@@ -57,7 +56,8 @@ namespace RWS
         const string templateUri = "{0}/{1}";
         public Address Address { get; private set; }
         public UAS UAS { get; private set; }
-        public BaseResponse7<Resource7, SystemInformationState7> SystemInformation { get; set; }
+        public BaseResponse7<Resource7, SystemInformationState7> SystemInformation7 { get; set; }
+        public BaseResponse<GetSystemInformationState> SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public ControllerService ControllerService { get; set; }
         public RobotWareService RobotWareService { get; set; }
@@ -103,7 +103,7 @@ namespace RWS
 
 
             using HttpClient client = new HttpClient(handler);
-            using var requestMessage = new HttpRequestMessage(method1, BuildUri(domain, urlParameters));
+            using var requestMessage = new HttpRequestMessage(method1, BuildUri7(domain, urlParameters));
 
             foreach (var header in headers)
                 requestMessage.Headers.Add(header.Item1, header.Item2);
@@ -176,6 +176,7 @@ namespace RWS
             response = await client.SendAsync(requestMessage).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
+
             return await DeserializeJsonResponse<T>(response).ConfigureAwait(true);
 
         }
@@ -211,8 +212,32 @@ namespace RWS
 
             return combinedParams.ToString();
         }
-
         private Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
+        {
+            var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "http://" + Address.Full, domain);
+
+            if (uri.EndsWith("/", StringComparison.InvariantCulture)) uri = uri.TrimEnd('/');
+
+            StringBuilder extraParameters = new StringBuilder();
+
+            if (urlParameters != null)
+            {
+                foreach (var param in urlParameters)
+
+                    extraParameters.Append((extraParameters.Length == 0 ? "?" : "&") + param.Item1 + "=" + param.Item2);
+
+
+                if (extraParameters.Length > 0)
+                {
+                    uri += extraParameters.ToString();
+                }
+            }
+
+            Debug.WriteLine(uri);
+
+            return new Uri(uri);
+        }
+        private Uri BuildUri7(string domain, Tuple<string, string>[] urlParameters)
         {
             var uri = string.Format(CultureInfo.InvariantCulture, templateUri, "https://" + Address.Full, domain);
 
