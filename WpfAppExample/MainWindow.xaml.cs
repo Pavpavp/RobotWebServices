@@ -1,4 +1,6 @@
-﻿using RWS;
+﻿using ABB.Robotics.Controllers;
+using ABB.Robotics.Controllers.Discovery;
+using RWS;
 using RWS.SubscriptionServices;
 using System;
 using System.Linq;
@@ -25,23 +27,31 @@ namespace WpfAppExample
 
         private async void Main()
         {
+
+            var scanner = new NetworkScanner();
+            scanner.Scan();
+            ControllerInfoCollection controllers = scanner.Controllers;
+            var vc = controllers.First(c => c.IsVirtual);
+
+
+
+
             //Testing RWS2.0 with RW7
 
-            //var ctrls = ControllerDiscovery.Discover();
 
-            ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
+            ControllerSession rwsCs1 = new ControllerSession(new Address($"{vc.IPAddress}:{vc.WebServicesPort}"), vc.VersionName.Contains("7."));
 
-            //var ios = rwsCs1.RobotWareService.GetIOSignals7Async().Result;
+            var ios = await rwsCs1.RobotWareService.GetIOSignals7Async();
 
-            //var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
+            var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
-            //io.OnValueChanged += IOSignal_ValueChanged;
-
+            io.OnValueChanged += IOSignal_ValueChanged;
 
 
 
-             var dev = await rwsCs1.RobotWareService.GetIODevicesAsync();
-            var dev2 = await rwsCs1.RobotWareService.GetIODevicesAsync();
+
+            //var dev = await rwsCs1.RobotWareService.GetIODevicesAsync();
+            //var dev2 = await rwsCs1.RobotWareService.GetIODevicesAsync();
             ;
 
 

@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using RWS;
+using RWS.Data;
 using System.Threading.Tasks;
 
 namespace RobotWebServices.Tests

@@ -1,13 +1,9 @@
-﻿
-using RWS.Data;
+﻿using RWS.Data;
 using RWS.RobotWareServices;
 using RWS.UserServices;
 using RWS.SubscriptionServices;
 using RWS.RobotWareServices.StateData;
 using static RWS.Enums;
-using Newtonsoft.Json;
-using Zeroconf;
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -18,8 +14,10 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Linq;
-
 using System.Collections.Generic;
+using Zeroconf;
+using Newtonsoft.Json;
+
 
 namespace RWS
 {
@@ -56,28 +54,45 @@ namespace RWS
         const string templateUri = "{0}/{1}";
         public Address Address { get; private set; }
         public UAS UAS { get; private set; }
-        public BaseResponse7<Resource7, SystemInformationState7> SystemInformation7 { get; set; }
-        public BaseResponse<GetSystemInformationState> SystemInformation { get; set; }
+        public bool IsOmniCore { get; set; }
+        //public BaseResponse7<Resource7, SystemInformationState7> SystemInformation7 { get; set; }
+        //public BaseResponse<GetSystemInformationState> SystemInformation { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public ControllerService ControllerService { get; set; }
         public RobotWareService RobotWareService { get; set; }
         public FileService FileService { get; set; }
         public UserService UserService { get; set; }
         public SubscriptionService SubscriptionService { get; set; }
-        public ControllerSession(Address ip, [Optional]UAS uas)
+        public ControllerSession(Address ip, [Optional] UAS uas)
         {
             Address = ip;
 
             UAS = uas ?? new UAS("Default User", "robotics");
 
+            InitServices();
 
+
+        }
+
+        public ControllerSession(Address ip, bool isOmniCore, [Optional] UAS uas)
+        {
+            Address = ip;
+
+            IsOmniCore = isOmniCore;
+
+            UAS = uas ?? new UAS("Default User", "robotics");
+
+            InitServices();
+
+
+        }
+        private void InitServices()
+        {
             ControllerService = new ControllerService(this);
             RobotWareService = new RobotWareService(this);
             FileService = new FileService(this);
             SubscriptionService = new SubscriptionService(this);
             UserService = new UserService(this);
-
-            SystemInformation = RobotWareService.GetSystemInformationAsync().Result;
         }
 
         public void Connect(Address ip, UAS uas)

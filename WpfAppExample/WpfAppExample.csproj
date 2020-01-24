@@ -10,4 +10,10 @@
     <ProjectReference Include="..\RobotWebServices\RobotWebServices.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ABB.Robotics.Controllers.PC">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\ABB\RobotStudio 2019\Bin\ABB.Robotics.Controllers.PC.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

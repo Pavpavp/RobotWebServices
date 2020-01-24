@@ -5,11 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Security;
 using System.Net.WebSockets;
-using System.Security.Authentication;
-//using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -116,7 +112,9 @@ namespace RWS.SubscriptionServices
 
             wSock.Options.Cookies = cc;
 
+#if NETCOREAPP3_1
             wSock.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
+#endif
 
             wSock.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(5000);
 

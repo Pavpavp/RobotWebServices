@@ -31,7 +31,7 @@ namespace RWS.Data
 
             }
         }
-        public ControllerSession ControllerSession { get; set; }
+        //public ControllerSession ControllerSession { get; set; }
 
         [JsonProperty(PropertyName = "_title")]
         public string Title { get; set; }
