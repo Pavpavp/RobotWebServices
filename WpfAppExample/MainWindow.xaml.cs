@@ -41,11 +41,11 @@ namespace WpfAppExample
 
             ControllerSession rwsCs1 = new ControllerSession(new Address($"{vc.IPAddress}:{vc.WebServicesPort}"), vc.VersionName.Contains("7."));
 
-            var ios = await rwsCs1.RobotWareService.GetIOSignals7Async();
+            var ios = await rwsCs1.RobotWareService.GetSystemInformationAsync();
 
-            var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
+            //var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
-            io.OnValueChanged += IOSignal_ValueChanged;
+            //io.OnValueChanged += IOSignal_ValueChanged;
 
 
 

@@ -32,7 +32,7 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("privilege", privilege.ToString().ToLowerInvariant()) };
             Tuple<string, string>[] urlParameters = Array.Empty<Tuple<string, string>>();
 
-            await Controller.CallAsync<dynamic>(RequestMethod.POST, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
+            await Controller.CallAsync_Old<dynamic>(RequestMethod.POST, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
@@ -42,7 +42,7 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("uid", uid.ToString(CultureInfo.InvariantCulture)), Tuple.Create("privilege", privilege.ToString().ToLowerInvariant()) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set") };
 
-            await Controller.CallAsync<dynamic>(RequestMethod.POST, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
+            await Controller.CallAsync_Old<dynamic>(RequestMethod.POST, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
@@ -52,7 +52,7 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = Array.Empty<Tuple<string, string>>();
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "cancel") };
 
-            await Controller.CallAsync<dynamic>(RequestMethod.POST, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
+            await Controller.CallAsync_Old<dynamic>(RequestMethod.POST, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
@@ -62,7 +62,7 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = Array.Empty<Tuple<string, string>>();
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await Controller.CallAsync<GetRmmpState>(RequestMethod.GET, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
+            return await Controller.CallAsync_Old<GetRmmpState>(RequestMethod.GET, "users/rmmp", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
@@ -72,7 +72,7 @@ namespace RWS.UserServices
             Tuple<string, string>[] dataParameters = { Tuple.Create("type", loginType.ToString().ToLowerInvariant()) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-locale"), Tuple.Create("json", "1") };
 
-            await Controller.CallAsync<dynamic>(RequestMethod.POST, "users", dataParameters, urlParameters).ConfigureAwait(true);
+            await Controller.CallAsync_Old<dynamic>(RequestMethod.POST, "users", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 
@@ -88,7 +88,7 @@ namespace RWS.UserServices
 
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            await Controller.CallAsync<dynamic>(RequestMethod.POST, "users", dataParameters, urlParameters).ConfigureAwait(true);
+            await Controller.CallAsync_Old<dynamic>(RequestMethod.POST, "users", dataParameters, urlParameters).ConfigureAwait(true);
 
         }
 

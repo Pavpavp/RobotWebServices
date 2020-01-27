@@ -26,7 +26,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<ControllerResourcesState>(RequestMethod.GET, "ctrl", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<ControllerResourcesState>(RequestMethod.GET, "ctrl", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -37,7 +37,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-            return ControllerSession.CallAsync<ControllerResourcesState>(RequestMethod.GET, "ctrl", dataParameters, urlParameters);
+            return ControllerSession.CallAsync_Old<ControllerResourcesState>(RequestMethod.GET, "ctrl", dataParameters, urlParameters);
 
         }
 
@@ -48,7 +48,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = { Tuple.Create("restart-mode", rstMode) };
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            await ControllerSession.CallAsync<dynamic>(RequestMethod.POST, "ctrl", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync_Old<dynamic>(RequestMethod.POST, "ctrl", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -68,7 +68,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return ControllerSession.CallAsync<ClockResourceState>(RequestMethod.GET, "ctrl/clock", dataParameters, urlParameters);
+            return ControllerSession.CallAsync_Old<ClockResourceState>(RequestMethod.GET, "ctrl/clock", dataParameters, urlParameters);
 
         }
 
@@ -78,7 +78,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return ControllerSession.CallAsync<TimeZoneResourceState>(RequestMethod.GET, "ctrl/timezone", dataParameters, urlParameters);
+            return ControllerSession.CallAsync_Old<TimeZoneResourceState>(RequestMethod.GET, "ctrl/timezone", dataParameters, urlParameters);
 
         }
 
@@ -88,7 +88,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<ClockActionsState>(RequestMethod.GET, "ctrl/clock", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<ClockActionsState>(RequestMethod.GET, "ctrl/clock", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -98,7 +98,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<TimeZoneActionsState>(RequestMethod.GET, "ctrl/timezone", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<TimeZoneActionsState>(RequestMethod.GET, "ctrl/timezone", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -109,7 +109,7 @@ namespace RWS
 
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-timezone"), Tuple.Create("json", "1") };
 
-            await ControllerSession.CallAsync<dynamic>(RequestMethod.POST, "ctrl/time", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync_Old<dynamic>(RequestMethod.POST, "ctrl/time", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -127,7 +127,7 @@ namespace RWS
 
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            await ControllerSession.CallAsync<dynamic>(RequestMethod.PUT, "ctrl/clock", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync_Old<dynamic>(RequestMethod.PUT, "ctrl/clock", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -138,7 +138,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<TimeServerResourceState>(RequestMethod.GET, "ctrl/clock/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<TimeServerResourceState>(RequestMethod.GET, "ctrl/clock/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -148,7 +148,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<TimeServerActionsState>(RequestMethod.GET, "ctrl/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<TimeServerActionsState>(RequestMethod.GET, "ctrl/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -160,7 +160,7 @@ namespace RWS
 
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set-timeserver"), Tuple.Create("json", "1") };
 
-            await ControllerSession.CallAsync<dynamic>(RequestMethod.POST, "ctrl/clock/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync_Old<dynamic>(RequestMethod.POST, "ctrl/clock/timeserver", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -181,7 +181,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<IdentityResourceState>(RequestMethod.GET, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<IdentityResourceState>(RequestMethod.GET, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -191,7 +191,7 @@ namespace RWS
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("action", "show"), Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<IdentityActionsState>(RequestMethod.GET, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<IdentityActionsState>(RequestMethod.GET, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -202,7 +202,7 @@ namespace RWS
 
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            await ControllerSession.CallAsync<dynamic>(RequestMethod.PUT, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync_Old<dynamic>(RequestMethod.PUT, "ctrl/identity", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 

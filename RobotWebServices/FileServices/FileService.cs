@@ -26,7 +26,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<GetDirectoryListingState>(RequestMethod.GET, "fileservice/" + path, dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<GetDirectoryListingState>(RequestMethod.GET, "fileservice/" + path, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
@@ -36,7 +36,7 @@ namespace RWS.RobotWareServices
             Tuple<string, string>[] dataParameters = { Tuple.Create(fromPath, "") };
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
-            return await ControllerSession.CallAsync<dynamic>(RequestMethod.PUT, "/fileservice/" + toPath, dataParameters, urlParameters).ConfigureAwait(false);
+            return await ControllerSession.CallAsync_Old<dynamic>(RequestMethod.PUT, "/fileservice/" + toPath, dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
