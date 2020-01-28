@@ -1,13 +1,9 @@
 ﻿using ABB.Robotics.Controllers;
 using ABB.Robotics.Controllers.Discovery;
-using RobotWebServices;
 using RWS;
-using RWS.IRC5.Data;
-using RWS.IRC5.RobotWareServices.StateTypes;
 using RWS.IRC5.SubscriptionServices;
-using System;
+using RWS.OmniCore;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Windows;
 
