@@ -2,7 +2,7 @@
 using RWS.IRC5.SubscriptionServices;
 using RWS.OmniCore.ResponseTypes;
 
-namespace RWS.IRC5.ResponseTypes
+namespace RWS.OmniCore.ResponseTypes
 {
     public class IOSignalsResource : SubscriptionEventHelper<IOEventArgs, int>
     {
@@ -14,7 +14,7 @@ namespace RWS.IRC5.ResponseTypes
                 var ioEventArgs = new IOEventArgs();
 
                 ValueChangedEventHandler += value;
-                StartSubscriptionAsync(ControllerSession, $"/rw/iosystem/{Links.Self.Href};state", ioEventArgs);
+                StartSubscriptionAsync(Cs, $"/rw/iosystem/{Links.Self.Href};state", ioEventArgs);
             }
             remove
             {

@@ -14,7 +14,7 @@ namespace RWS.IRC5.ResponseTypes
                 var ioEventArgs = new IOEventArgs();
 
                 ValueChangedEventHandler += value;
-                StartSubscriptionAsync(ControllerSession, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"), ioEventArgs);
+                StartSubscriptionAsync(Cs, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"), ioEventArgs);
             }
             remove
             {
@@ -26,7 +26,6 @@ namespace RWS.IRC5.ResponseTypes
 
             }
         }
-        //public ControllerSession ControllerSession { get; set; }
 
         [JsonProperty(PropertyName = "_title")]
         public string Title { get; set; }

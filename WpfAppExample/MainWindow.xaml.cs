@@ -41,20 +41,22 @@ namespace WpfAppExample
 
 
             var rwsCs7 = new OmniCoreSession(new Address($"{vc7.IPAddress}:{vc7.WebServicesPort}"));
-        //    var info7 = await rwsCs7.RobotWareService.GetSystemInformationAsync();
+            //    var info7 = await rwsCs7.RobotWareService.GetSystemInformationAsync();
             var ios7 = await rwsCs7.RobotWareService.GetIOSignalsAsync();
+            var io7 = ios7.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
             var rwsCs6 = new IRC5Session(new Address($"{vc6.IPAddress}:{vc6.WebServicesPort}"));
-          //  var info6 = await rwsCs6.RobotWareService.GetSystemInformationAsync();
+            //  var info6 = await rwsCs6.RobotWareService.GetSystemInformationAsync();
             var ios6 = await rwsCs6.RobotWareService.GetIOSignalsAsync();
+            var io6 = ios6.Embedded.State.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
-
-
+            io6.OnValueChanged += IOSignal_ValueChanged;
+            //io7.OnValueChanged += IOSignal_ValueChanged;
 
             //var ios = await rwsCs1.RobotWareService.GetSystemInformationAsync();
 
 
-            //   var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync();
+            // var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync();
 
 
 

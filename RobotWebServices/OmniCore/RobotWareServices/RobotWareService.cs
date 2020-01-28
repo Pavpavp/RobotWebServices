@@ -38,7 +38,7 @@ namespace RobotWebServices.OmniCoreServices.RobotWareServices
             var ioResp = await ControllerSession.CallAsync<IOSignalsResource, Resource7>(RequestMethod.GET, "rw/iosystem/signals", dataParameters, urlParameters).ConfigureAwait(false);
 
             foreach (var res in ioResp.Embedded.Resources)
-                res.ControllerSession = ControllerSession;
+                res.Cs = ControllerSession as OmniCoreSession;
 
             return ioResp;
         }

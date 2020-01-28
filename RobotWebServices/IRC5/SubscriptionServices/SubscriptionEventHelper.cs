@@ -16,22 +16,21 @@ namespace RWS.IRC5.SubscriptionServices
     {
         public Dictionary<object, ClientWebSocket> SubscriptionSockets { get; } = new Dictionary<object, ClientWebSocket>();
         protected ValueChangedIOEventHandler ValueChangedEventHandler { get; set; }
-        public IRC5Session ControllerSession { get; set; }
-
+    
         public delegate void ValueChangedIOEventHandler(object source, T args);
         private int Prio { get; set; } = 1;
-        public IRC5Session Cs { get; private set; }
+        public IRC5Session Cs { get; set; }
 
         public async void StartSubscriptionAsync(IRC5Session cs, string resource, T eventArgs)
         {
-            ControllerSession = cs;
+            Cs = cs;
 
 
             using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(cs?.UAS.User, cs?.UAS.Password) })
             {
                 handler.Proxy = null;   // disable the proxy, the controller is connected on same subnet as the PC 
                 handler.UseProxy = false;
-                handler.CookieContainer = ControllerSession.CookieContainer;
+             //   handler.CookieContainer = Cs.CookieContainer;
 
                 handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
 
@@ -103,15 +102,15 @@ namespace RWS.IRC5.SubscriptionServices
 
             using ClientWebSocket wSock = new ClientWebSocket();
 
-            wSock.Options.Credentials = new NetworkCredential(ControllerSession.UAS.User, ControllerSession.UAS.Password);
+            wSock.Options.Credentials = new NetworkCredential(Cs.UAS.User, Cs.UAS.Password);
 
             wSock.Options.Proxy = null;
 
             CookieContainer cc = new CookieContainer();
 
-            cc.Add(new Uri($"https://{ControllerSession.Address.Full}"), new Cookie("ABBCX", abbCookie, "/", ControllerSession.Address.IP));
+            cc.Add(new Uri($"https://{Cs.Address.Full}"), new Cookie("ABBCX", abbCookie, "/", Cs.Address.IP));
 
-            cc.Add(new Uri($"https://{ControllerSession.Address.Full}"), new Cookie("-http-session-", sessionCookie, "/", ControllerSession.Address.IP));
+            cc.Add(new Uri($"https://{Cs.Address.Full}"), new Cookie("-http-session-", sessionCookie, "/", Cs.Address.IP));
 
             wSock.Options.Cookies = cc;
 
@@ -123,7 +122,7 @@ namespace RWS.IRC5.SubscriptionServices
 
             wSock.Options.AddSubProtocol("rws_subscription");
 
-            await wSock.ConnectAsync(new Uri($"wss://{ControllerSession.Address.Full}/poll"), cancelToken.Token).ConfigureAwait(true);
+            await wSock.ConnectAsync(new Uri($"wss://{Cs.Address.Full}/poll"), cancelToken.Token).ConfigureAwait(true);
 
             var bArr = new byte[1024];
             ArraySegment<byte> arr = new ArraySegment<byte>(bArr);

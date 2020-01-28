@@ -1,5 +1,6 @@
 ﻿using RWS.IRC5.ResponseTypes;
 using RWS.IRC5.RobotWareServices.StateTypes;
+using RWS.OmniCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,16 +21,16 @@ namespace RWS.IRC5.RobotWareServices
         }
 
 
-  
 
-        public async Task<BaseResponse<SystemInformationState>> GetSystemInformationAsync() 
+
+        public async Task<BaseResponse<SystemInformationState>> GetSystemInformationAsync()
         {
 
             Tuple<string, string>[] dataParameters = null;
             Tuple<string, string>[] urlParameters = { Tuple.Create("json", "1") };
 
             return await ControllerSession.CallAsync<SystemInformationState>(RequestMethod.GET, "rw/system", dataParameters, urlParameters).ConfigureAwait(false);
-     
+
         }
 
         public async Task<BaseResponse<IONetworksState>> GetIONetworksAsync()
@@ -62,7 +63,7 @@ namespace RWS.IRC5.RobotWareServices
             var resp = await ControllerSession.CallAsync<IOSignalsState>(RequestMethod.GET, "rw/iosystem/signals", dataParameters, urlParameters).ConfigureAwait(false);
 
             foreach (var ioState in resp.Embedded.State)
-                ioState.ControllerSession = ControllerSession;
+                ioState.Cs = ControllerSession as IRC5Session;
 
             return resp;
 

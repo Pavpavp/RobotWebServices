@@ -1,12 +1,8 @@
 ﻿using RobotWebServices.OmniCoreServices.RobotWareServices;
-using RWS;
-using RWS.IRC5.ResponseTypes;
 using RWS.OmniCore.ResponseTypes;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using static RWS.Enums;
 
@@ -51,7 +47,7 @@ namespace RWS.OmniCore
 
             HttpResponseMessage response;
 
-            CreateRequestMessage(requestMethod, domain, dataParameters, urlParameters, headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage);
+            CreateHttpClient(requestMethod, domain, dataParameters, urlParameters, headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage);
 
             response = await client.SendAsync(requestMessage).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();

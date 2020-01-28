@@ -93,7 +93,7 @@ namespace RWS
 
             HttpResponseMessage response;
 
-            CreateRequestMessage(requestMethod, domain, dataParameters, urlParameters, headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage);
+            CreateHttpClient(requestMethod, domain, dataParameters, urlParameters, headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage);
 
             response = await client.SendAsync(requestMessage).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
@@ -103,7 +103,7 @@ namespace RWS
 
         }
 
-        protected void CreateRequestMessage(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, Tuple<string, string>[] headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage)
+        protected void CreateHttpClient(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, Tuple<string, string>[] headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage)
         {
             var method = new HttpMethod(requestMethod.ToString());
             handler = new HttpClientHandler()
@@ -164,7 +164,7 @@ namespace RWS
 
             return combinedParams.ToString();
         }
-        private Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
+        protected Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
         {
             var url = string.Format(CultureInfo.InvariantCulture, TemplateUri, Address.Full, domain);
 
