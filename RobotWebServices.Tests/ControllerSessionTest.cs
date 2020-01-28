@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using RWS;
-using RWS.Data;
 using System.Threading.Tasks;
 
 namespace RobotWebServices.Tests
@@ -14,10 +13,10 @@ namespace RobotWebServices.Tests
         public async Task GetIOSignals_Localhost_HasValue()
         {
             //Arrange
-            ControllerSession rwsCs1 = new ControllerSession(new Address("localhost:80"));
+            IRC5Session rwsCs1 = new IRC5Session(new Address("localhost:80"));
 
             //Act
-            var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
+          //  var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync().ConfigureAwait(false);
 
             //Assert
             //Assert.IsNotEmpty(ios.Embedded.State);
