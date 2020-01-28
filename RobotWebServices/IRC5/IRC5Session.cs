@@ -49,12 +49,11 @@ namespace RWS
 
     public class IRC5Session
     {
-        public string TemplateUri { get; set; } = "http://{0}/{1}";
+        internal string TemplateUri { get; set; } = "http://{0}/{1}";
         protected string AcceptHeader { get; set; } = "application/x-www-form-urlencoded";
         protected string ContentTypeHeader { get; set; } = "application/x-www-form-urlencoded";
         public Address Address { get; set; }
         public UAS UAS { get; set; }
-        public bool IsOmniCore { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public ControllerService ControllerService { get; set; }
         public RobotWareService RobotWareService { get; set; }

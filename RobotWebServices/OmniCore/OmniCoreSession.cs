@@ -27,7 +27,7 @@ namespace RWS.OmniCore
         {
             Address = ip;
 
-            TemplateUri = TemplateUri.Replace("http:", "https:");
+            TemplateUri = "https://{0}/{1}";
             AcceptHeader = "application/hal+json;v=2.0";
             ContentTypeHeader = "application/x-www-form-urlencoded;v=2.0";
 
