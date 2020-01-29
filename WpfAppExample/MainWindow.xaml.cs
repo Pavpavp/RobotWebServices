@@ -31,22 +31,19 @@ namespace WpfAppExample
             var scanner = new NetworkScanner();
             scanner.Scan();
             ControllerInfoCollection controllers = scanner.Controllers;
-            var vc7 = controllers.FirstOrDefault(c => c.IsVirtual && c.VersionName.Contains("7.0"));
-            var vc6 = controllers.FirstOrDefault(c => c.IsVirtual && c.VersionName.Contains("6.0"));
+            var vc7 = controllers.FirstOrDefault(c => c.IsVirtual && c.VersionName.Contains("7."));
+            var vc6 = controllers.FirstOrDefault(c => c.IsVirtual && c.VersionName.Contains("6."));
 
 
-
-            //Testing RWS2.0 with RW7
-
-
+            //Testing RWS2.0 
 
             var rwsCs7 = new OmniCoreSession(new Address($"{vc7.IPAddress}:{vc7.WebServicesPort}"));
-          //  var info7 = await rwsCs7.RobotWareService.GetSystemInformationAsync();
+            //var info7 = await rwsCs7.RobotWareService.GetSystemInformationAsync();
             var ios7 = await rwsCs7.RobotWareService.GetIOSignalsAsync();
             var io7 = ios7.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
             var rwsCs6 = new IRC5Session(new Address($"{vc6.IPAddress}:{vc6.WebServicesPort}"));
-            //  var info6 = await rwsCs6.RobotWareService.GetSystemInformationAsync();
+            //var info6 = await rwsCs6.RobotWareService.GetSystemInformationAsync();
             var ios6 = await rwsCs6.RobotWareService.GetIOSignalsAsync();
             var io6 = ios6.Embedded.State.FirstOrDefault(io => io.Name.Contains("doSigTest"));
 
@@ -69,8 +66,7 @@ namespace WpfAppExample
 
             //var dev = await rwsCs1.RobotWareService.GetIODevicesAsync();
             //var dev2 = await rwsCs1.RobotWareService.GetIODevicesAsync();
-            Thread.Sleep(5000);
-            ;
+
 
             //  rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY);
             //var rmmpState = await rwsCs1.UserService.GetRmmpStateAsync().ConfigureAwait(false);
