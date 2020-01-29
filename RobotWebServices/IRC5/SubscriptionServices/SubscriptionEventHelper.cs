@@ -19,7 +19,7 @@ namespace RWS.IRC5.SubscriptionServices
         private string Protocol { get; set; } = "robapi2_subscription";
         public Dictionary<object, ClientWebSocket> SubscriptionSockets { get; } = new Dictionary<object, ClientWebSocket>();
         protected ValueChangedIOEventHandler ValueChangedEventHandler { get; set; }
-        private int Prio { get; set; } = 1;
+        public int Prio { get; set; } = 1;
         public IRC5Session Cs { get; set; }
 
 
@@ -46,17 +46,12 @@ namespace RWS.IRC5.SubscriptionServices
                     Tuple.Create("1-p", Prio.ToString(CultureInfo.InvariantCulture))
                 };
 
-            using (HttpContent httpContent = new StringContent(IRC5Session.BuildDataParameters(dataParameters)))
-            {
-                httpContent.Headers.Remove("Content-Type");
-                httpContent.Headers.Add("Content-Type", Cs.ContentTypeHeader);
+            using HttpContent httpContent = new StringContent(IRC5Session.BuildDataParameters(dataParameters));
+            httpContent.Headers.Remove("Content-Type");
+            httpContent.Headers.Add("Content-Type", Cs.ContentTypeHeader);
 
-                using (HttpClient client = new HttpClient(handler))
-                {
-                    await SocketThreadAsync(client, httpContent, eventArgs).ConfigureAwait(true);
-
-                }
-            }
+            using HttpClient client = new HttpClient(handler);
+            await SocketThreadAsync(client, httpContent, eventArgs).ConfigureAwait(true);
         }
 
 
