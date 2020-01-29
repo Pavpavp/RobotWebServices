@@ -49,9 +49,9 @@ namespace RWS
 
     public class IRC5Session
     {
-        internal string TemplateUri { get; set; } = "http://{0}/{1}";
-        protected string AcceptHeader { get; set; } = "application/x-www-form-urlencoded";
-        protected string ContentTypeHeader { get; set; } = "application/x-www-form-urlencoded";
+        internal string TemplateUrl { get; set; } = "http://{0}/{1}";
+        internal string AcceptHeader { get; set; } = "application/x-www-form-urlencoded";
+        internal string ContentTypeHeader { get; set; } = "application/x-www-form-urlencoded";
         public Address Address { get; set; }
         public UAS UAS { get; set; }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
@@ -60,6 +60,7 @@ namespace RWS
         public FileService FileService { get; set; }
         public UserService UserService { get; set; }
         public SubscriptionService SubscriptionService { get; set; }
+        public bool IsOmnicore { get; set; } = false;
         public IRC5Session(Address ip, [Optional] UAS uas)
         {
             Address = ip;
@@ -69,7 +70,7 @@ namespace RWS
             InitServices();
 
 
-        }  
+        }
         private void InitServices()
         {
             ControllerService = new ControllerService(this);
@@ -85,7 +86,7 @@ namespace RWS
             UAS = uas;
         }
 
-    
+
 
         public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
         {
@@ -166,7 +167,7 @@ namespace RWS
         }
         protected Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
         {
-            var url = string.Format(CultureInfo.InvariantCulture, TemplateUri, Address.Full, domain);
+            var url = string.Format(CultureInfo.InvariantCulture, TemplateUrl, Address.Full, domain);
 
             if (url.EndsWith("/", StringComparison.InvariantCulture)) url = url.TrimEnd('/');
 

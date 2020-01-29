@@ -14,73 +14,50 @@ namespace RWS.IRC5.SubscriptionServices
 
     public abstract class SubscriptionEventHelper<T, TRet> where T : IEventArgs<TRet>
     {
+        public delegate void ValueChangedIOEventHandler(object source, T args);
+        private string TemplateSocketUrl { get; set; } = "ws://{0}/poll";
+        private string Protocol { get; set; } = "robapi2_subscription";
         public Dictionary<object, ClientWebSocket> SubscriptionSockets { get; } = new Dictionary<object, ClientWebSocket>();
         protected ValueChangedIOEventHandler ValueChangedEventHandler { get; set; }
-    
-        public delegate void ValueChangedIOEventHandler(object source, T args);
         private int Prio { get; set; } = 1;
         public IRC5Session Cs { get; set; }
+
 
         public async void StartSubscriptionAsync(IRC5Session cs, string resource, T eventArgs)
         {
             Cs = cs;
 
-
-            using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(cs?.UAS.User, cs?.UAS.Password) })
+            if (Cs.IsOmnicore)
             {
-                handler.Proxy = null;   // disable the proxy, the controller is connected on same subnet as the PC 
-                handler.UseProxy = false;
-             //   handler.CookieContainer = Cs.CookieContainer;
+                Protocol = "rws_subscription";
+                TemplateSocketUrl = "wss://{0}/poll";
+            }
 
-                handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
+            using HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(cs?.UAS.User, cs?.UAS.Password) };
+            handler.Proxy = null;
+            handler.UseProxy = false;
 
-                Tuple<string, string>[] dataParameters =
-                {
+            handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
+
+            Tuple<string, string>[] dataParameters =
+            {
                     Tuple.Create("resources", "1"),
                     Tuple.Create("1", resource),
                     Tuple.Create("1-p", Prio.ToString(CultureInfo.InvariantCulture))
                 };
 
-                using (HttpContent httpContent = new StringContent(IRC5Session.BuildDataParameters(dataParameters)))
+            using (HttpContent httpContent = new StringContent(IRC5Session.BuildDataParameters(dataParameters)))
+            {
+                httpContent.Headers.Remove("Content-Type");
+                httpContent.Headers.Add("Content-Type", Cs.ContentTypeHeader);
+
+                using (HttpClient client = new HttpClient(handler))
                 {
-                    httpContent.Headers.Remove("Content-Type");
-                    httpContent.Headers.Add("Content-Type", "application/x-www-form-urlencoded;v=2.0");
+                    await SocketThreadAsync(client, httpContent, eventArgs).ConfigureAwait(true);
 
-                    using (HttpClient client = new HttpClient(handler))
-                    {
-                        await SocketThreadAsync(client, httpContent, eventArgs).ConfigureAwait(true);
-
-                    }
                 }
             }
         }
-
-        //public async void StartSubscriptionAsync(ControllerSession cs, string resource, T eventArgs)
-        //{
-        //    ControllerSession = cs;
-
-        //    using (HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(cs?.UAS.User, cs?.UAS.Password) })
-        //    {
-
-        //        handler.Proxy = null;   // disable the proxy, the controller is connected on same subnet as the PC 
-        //        handler.UseProxy = false;
-        //        handler.CookieContainer = ControllerSession.CookieContainer;
-
-        //        using (HttpClient client = new HttpClient(handler))
-        //        {
-        //            var httpContent = new Dictionary<string, string>
-        //                {
-        //                    { "resources", "1" },
-        //                    { "1", resource },
-        //                    { "1-p", Prio.ToString(CultureInfo.InvariantCulture) }
-        //                };
-
-        //            await SocketThreadAsync(client, httpContent, eventArgs).ConfigureAwait(true);
-
-        //        }
-        //    }
-
-        //}
 
 
         private async Task SocketThreadAsync(HttpClient client, HttpContent httpContent, T eventArgs)
@@ -88,10 +65,10 @@ namespace RWS.IRC5.SubscriptionServices
 
             using CancellationTokenSource cancelToken = new CancellationTokenSource();
 
+            var uri = new Uri(string.Format(CultureInfo.InvariantCulture, Cs.TemplateUrl, Cs.Address.Full, "subscription"));
 
-            //var resp = await client.PostAsync(new Uri($"https://{ControllerSession.Address.Full}/subscription"), httpContent).ConfigureAwait(true);
+            var resp = await client.PostAsync(uri, httpContent).ConfigureAwait(true);
 
-            var resp = await client.PostAsync(new Uri(string.Format(CultureInfo.InvariantCulture, Cs.TemplateUri, Cs.Address.Full, "subscription")), httpContent).ConfigureAwait(true);
             resp.EnsureSuccessStatusCode();
 
             var header = resp.Headers.FirstOrDefault(p => p.Key == "Set-Cookie");
@@ -120,9 +97,9 @@ namespace RWS.IRC5.SubscriptionServices
 
             wSock.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(5000);
 
-            wSock.Options.AddSubProtocol("rws_subscription");
+            wSock.Options.AddSubProtocol(Protocol);
 
-            await wSock.ConnectAsync(new Uri($"wss://{Cs.Address.Full}/poll"), cancelToken.Token).ConfigureAwait(true);
+            await wSock.ConnectAsync(new Uri(string.Format(CultureInfo.InvariantCulture, TemplateSocketUrl, Cs.Address.Full)), cancelToken.Token).ConfigureAwait(true);
 
             var bArr = new byte[1024];
             ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
@@ -152,68 +129,5 @@ namespace RWS.IRC5.SubscriptionServices
             }
         }
 
-        //private async Task SocketThreadAsync(HttpClient client, Dictionary<string, string> httpContent, T eventArgs)
-        //{
-
-        //    using CancellationTokenSource cancelToken = new CancellationTokenSource();
-
-        //    using FormUrlEncodedContent fuec = new FormUrlEncodedContent(httpContent);
-
-        //    var resp = await client.PostAsync(new Uri($"http://{ControllerSession.Address.IP}/subscription"), fuec).ConfigureAwait(true);
-
-        //    resp.EnsureSuccessStatusCode();
-
-        //    var header = resp.Headers.FirstOrDefault(p => p.Key == "Set-Cookie");
-
-        //    var val = header.Value.Last();
-
-        //    string abbCookie = val.Split('=')[1].Split(';')[0];
-
-        //    using (ClientWebSocket wSock = new ClientWebSocket())
-        //    {
-        //        wSock.Options.Credentials = new NetworkCredential(ControllerSession.UAS.User, ControllerSession.UAS.Password);
-
-        //        wSock.Options.Proxy = null;
-
-        //        CookieContainer cc = new CookieContainer();
-
-        //        cc.Add(new Uri($"http://{ControllerSession.Address.IP}"), new Cookie("ABBCX", abbCookie, "/", ControllerSession.Address.IP));
-
-        //        wSock.Options.Cookies = cc;
-
-        //        wSock.Options.KeepAliveInterval = TimeSpan.FromMilliseconds(5000);
-
-        //        wSock.Options.AddSubProtocol("robapi2_subscription");
-
-        //        await wSock.ConnectAsync(new Uri($"ws://{ControllerSession.Address.IP}/poll"), cancelToken.Token).ConfigureAwait(true);
-        //        var bArr = new byte[1024];
-
-        //        ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
-
-        //        SubscriptionSockets.Add(ValueChangedEventHandler, wSock);
-
-        //        while (ValueChangedEventHandler != null)
-        //        {
-        //            try
-        //            {
-        //                var res = await wSock.ReceiveAsync(arr, cancelToken.Token).ConfigureAwait(true);
-
-        //                if (ValueChangedEventHandler == null)
-        //                    break;
-
-        //                var s = Encoding.ASCII.GetString(arr.Array);
-
-        //                eventArgs.SetValueChanged(s);
-        //                ValueChangedEventHandler(this, eventArgs);
-
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                if (ex is WebSocketException && wSock.State == WebSocketState.Aborted)
-        //                    break;
-        //            }
-        //        }
-        //    }
-        //}
     }
 }
