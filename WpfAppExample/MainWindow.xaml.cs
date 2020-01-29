@@ -56,18 +56,8 @@ namespace WpfAppExample
             // var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync();
 
 
-
-            // var io = ios.Embedded.Resources.FirstOrDefault(io => io.Name.Contains("doSigTest"));
-
-            //io.OnValueChanged += IOSignal_ValueChanged;
-
-
-
-
             //var dev = await rwsCs1.RobotWareService.GetIODevicesAsync();
             //var dev2 = await rwsCs1.RobotWareService.GetIODevicesAsync();
-
-
             //  rwsCs1.UserService.RequestRmmpAsync(Enums.Privilege.MODIFY);
             //var rmmpState = await rwsCs1.UserService.GetRmmpStateAsync().ConfigureAwait(false);
             //await rwsCs1.UserService.RegisterUserAsync("SEPARIA", "RobotStudio", "SWE", Enums.LoginType.LOCAL).ConfigureAwait(false);
@@ -75,9 +65,6 @@ namespace WpfAppExample
             //rwsCs1.RobotWareService.MastershipRequest();
             //rwsCs1.UserService.CancelHeldOrRequestedRmmp();
             //rwsCs1.ControllerService.Restart(Enums.RestartMode.RESTART);
-
-
-
 
 
         }
