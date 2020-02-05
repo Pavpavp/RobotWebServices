@@ -5,14 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppExample"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Sample RWS app" Height="450" Width="800">
     <Grid>
-        <ComboBox HorizontalAlignment="Left" Margin="49,98,0,0" VerticalAlignment="Top" Width="179" IsEditable="True" Height="29"/>
-        <Label Content="Controller info" HorizontalAlignment="Left" Margin="290,10,0,0" VerticalAlignment="Top" Height="24" Width="157"/>
-        <Button Content="Scan for controllers" HorizontalAlignment="Left" Margin="49,50,0,0" VerticalAlignment="Top" Height="26" Width="109"/>
-        <Button Content="Subscribe to operating mode" HorizontalAlignment="Left" Margin="33,241,0,0" VerticalAlignment="Top" Height="46" Width="183"/>
-        <Label Content="Operating mode" HorizontalAlignment="Left" Margin="61,292,0,0" VerticalAlignment="Top"/>
-        <CheckBox Name="CheckBox_sig" Content="CheckBox" HorizontalAlignment="Left" Margin="329,105,0,0" VerticalAlignment="Top" />
+        <TabControl>
+            <TabItem Header="Controller">
+                <Grid Background="#FFE5E5E5">
 
+                    <ListView Name="lvUsers" Margin="21,48,429,95">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Ctrl name" Width="120" DisplayMemberBinding="{Binding Name}" />
+                                <GridViewColumn Header="Version" Width="60" DisplayMemberBinding="{Binding Age}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Label Content="Controllers" HorizontalAlignment="Left" Margin="47,8,0,0" VerticalAlignment="Top"/>
+                    <Button Content="Scan" HorizontalAlignment="Left" Margin="315,19,0,0" VerticalAlignment="Top" Height="24" Width="41"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="IOs">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+            <TabItem Header="RAPID" Margin="-2,-2,-2,0">
+                <Grid Background="#FFE5E5E5"/>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
