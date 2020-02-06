@@ -61,6 +61,10 @@ namespace RWS
         public UserService UserService { get; set; }
         public SubscriptionService SubscriptionService { get; set; }
         public bool IsOmnicore { get; set; } = false;
+        public string CtrlName { get; set; }
+        public string Version { get; set; }
+
+
         public IRC5Session(Address ip, [Optional] UAS uas)
         {
             Address = ip;

@@ -11,16 +11,16 @@
             <TabItem Header="Controller">
                 <Grid Background="#FFE5E5E5">
 
-                    <ListView Name="lvUsers" Margin="21,48,429,95">
+                    <ListView Name="ListView_CtrlList"  ItemsSource="{Binding CtrlList}" Margin="21,48,363,83">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Ctrl name" Width="120" DisplayMemberBinding="{Binding Name}" />
-                                <GridViewColumn Header="Version" Width="60" DisplayMemberBinding="{Binding Age}" />
+                                <GridViewColumn Header="Ctrl name" Width="Auto" DisplayMemberBinding="{Binding CtrlName}" />
+                                <GridViewColumn Header="Version" Width="Auto" DisplayMemberBinding="{Binding Version}" />
                             </GridView>
                         </ListView.View>
                     </ListView>
                     <Label Content="Controllers" HorizontalAlignment="Left" Margin="47,8,0,0" VerticalAlignment="Top"/>
-                    <Button Content="Scan" HorizontalAlignment="Left" Margin="315,19,0,0" VerticalAlignment="Top" Height="24" Width="41"/>
+                    <Button Content="Scan" Name="Button_Scan" Click="Button_Scan_Click" HorizontalAlignment="Left" Margin="315,19,0,0" VerticalAlignment="Top" Height="24" Width="41"/>
                 </Grid>
             </TabItem>
             <TabItem Header="IOs">
