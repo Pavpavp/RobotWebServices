@@ -53,33 +53,21 @@ namespace WpfAppExample
             var taskList = new List<Task>();
             foreach (ControllerInfo ctrl in controllers)
             {
-                try
+
+                if (ctrl.VersionName.Contains("6."))
                 {
+                    var c = new IRC5Session(new Address($"{ctrl.IPAddress}{(ctrl.IsVirtual ? ":" + ctrl.WebServicesPort.ToString() : string.Empty)}"));
 
-                    if (ctrl.VersionName.Contains("6."))
-                    {
-                        var c = new IRC5Session(new Address($"{ctrl.IPAddress}{(ctrl.IsVirtual ? ":" + ctrl.WebServicesPort.ToString() : string.Empty)}"));
-
-                        taskList.Add(GetSysInfo(c));
-
-                    }
-                    else if (ctrl.VersionName.Contains("7."))
-                    {
-                        var c = new OmniCoreSession(new Address($"{ctrl.IPAddress}{(ctrl.IsVirtual ? ":" + ctrl.WebServicesPort.ToString() : string.Empty)}"));
-
-                        taskList.Add(GetSysInfo2(c));
-
-
-                    }
-
+                    taskList.Add(GetSysInfo(c));
 
                 }
-                catch
+                else if (ctrl.VersionName.Contains("7."))
                 {
-                    continue;
-                }
-                ;
+                    var c = new OmniCoreSession(new Address($"{ctrl.IPAddress}{(ctrl.IsVirtual ? ":" + ctrl.WebServicesPort.ToString() : string.Empty)}"));
 
+                    taskList.Add(GetSysInfo2(c));
+
+                }
             }
 
 
