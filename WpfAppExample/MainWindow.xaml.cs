@@ -19,7 +19,7 @@ namespace WpfAppExample
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        List<IRC5Session> _ctrlList;
+        List<IRC5Session> _ctrlList = new List<IRC5Session>();
 
         public List<IRC5Session> CtrlList
         {
@@ -49,8 +49,8 @@ namespace WpfAppExample
             scanner.Scan();
             ControllerInfoCollection controllers = scanner.Controllers;
 
-            CtrlList = new List<IRC5Session>();
             var taskList = new List<Task>();
+
             foreach (ControllerInfo ctrl in controllers)
             {
 
@@ -65,7 +65,7 @@ namespace WpfAppExample
                 {
                     var c = new OmniCoreSession(new Address($"{ctrl.IPAddress}{(ctrl.IsVirtual ? ":" + ctrl.WebServicesPort.ToString() : string.Empty)}"));
 
-                    taskList.Add(GetSysInfo2(c));
+                    taskList.Add(GetSysInfo(c));
 
                 }
             }
@@ -124,29 +124,42 @@ namespace WpfAppExample
 
         }
 
-        private async Task GetSysInfo2(OmniCoreSession c)
-        {
-            var sysInfo = await c.RobotWareService.GetSystemInformationAsync();
-            c.Version = sysInfo.State.First().RWVersionName;
-            c.CtrlName = sysInfo.State.First().Name;
+        //private async Task GetSysInfo2(OmniCoreSession c)
+        //{
+        //    var sysInfo = await c.RobotWareService.GetSystemInformationAsync();
+        //    c.Version = sysInfo.State.First().RWVersionName;
+        //    c.CtrlName = sysInfo.State.First().Name;
 
-            if (c.Version == null)
-                return;
+        //    if (c.Version == null)
+        //        return;
 
-            CtrlList.Add(c);
+        //    CtrlList.Add(c);
 
-            ListView_CtrlList.ItemsSource = null;
-            ListView_CtrlList.ItemsSource = CtrlList;
+        //    ListView_CtrlList.ItemsSource = null;
+        //    ListView_CtrlList.ItemsSource = CtrlList;
 
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListView_CtrlList.ItemsSource);
-            view.SortDescriptions.Add(new SortDescription("Version", ListSortDirection.Ascending));
-        }
+        //    CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListView_CtrlList.ItemsSource);
+        //    view.SortDescriptions.Add(new SortDescription("Version", ListSortDirection.Ascending));
+        //}
 
         private async Task GetSysInfo(IRC5Session c)
         {
-            var sysInfo = await c.RobotWareService.GetSystemInformationAsync();
-            c.Version = sysInfo.Embedded.State.First().RWVersionName;
-            c.CtrlName = sysInfo.Embedded.State.First().Name;
+
+            if (!c.IsOmnicore)
+            {
+                var sysInfo = await c.RobotWareService.GetSystemInformationAsync();
+
+                c.Version = sysInfo.Embedded.State.First().RWVersionName;
+                c.CtrlName = sysInfo.Embedded.State.First().Name;
+            }
+            else
+            {
+                var sysInfo = await ((OmniCoreSession)c).RobotWareService.GetSystemInformationAsync();
+
+                c.Version = sysInfo.State.First().RWVersionName;
+                c.CtrlName = sysInfo.State.First().Name;
+
+            }
 
             if (c.Version == null)
                 return;
