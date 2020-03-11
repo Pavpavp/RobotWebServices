@@ -54,7 +54,7 @@ namespace WpfAppExample
             var testSignals = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest1");
 
 
-            //testSignals.OnValueChanged += IOSignal_ValueChanged;
+            testSignals.OnValueChanged += IOSignal_ValueChanged;
             testSignals.LValue = 0;
 
 

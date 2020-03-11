@@ -17,7 +17,7 @@ namespace RWS.OmniCore.ResponseTypes
                 var ioEventArgs = new IOEventArgs();
 
                 ValueChangedEventHandler += value;
-                StartSubscriptionAsync(Cs, $"/rw/iosystem/{Links.Self.Href};state", ioEventArgs);
+                StartSubscriptionAsync(Cs, $"/rw/iosystem/signals/{Title};state", ioEventArgs);
             }
             remove
             {
@@ -55,7 +55,7 @@ namespace RWS.OmniCore.ResponseTypes
             set
             {
                 if (Cs != null) 
-                    UpdateSignal(Name, value);
+                    UpdateSignal(Title, value);
 
                 _lvalue = value;
             }

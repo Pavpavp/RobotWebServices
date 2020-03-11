@@ -48,7 +48,7 @@ namespace RWS.OmniCore
 
             HttpResponseMessage response;
 
-            CreateHttpClient(requestMethod, domain, dataParameters, urlParameters, headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage);
+            CreateHttpClient(requestMethod, domain, dataParameters, urlParameters, out HttpClient client, out HttpRequestMessage requestMessage);
 
             response = await client.SendAsync(requestMessage).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
