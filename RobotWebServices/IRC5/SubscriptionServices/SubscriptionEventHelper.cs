@@ -36,7 +36,6 @@ namespace RWS.IRC5.SubscriptionServices
             using HttpClientHandler handler = new HttpClientHandler { Credentials = new NetworkCredential(cs?.UAS.User, cs?.UAS.Password) };
             handler.Proxy = null;
             handler.UseProxy = false;
-
             handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
 
             Tuple<string, string>[] dataParameters =

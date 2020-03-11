@@ -11,41 +11,13 @@ using System.Text;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Net.Http;
-using System.Linq;
-using System.Collections.Generic;
-using Zeroconf;
 using Newtonsoft.Json;
 using RWS.IRC5;
 using RWS.IRC5.ResponseTypes;
+using System.Net.Http.Headers;
 
 namespace RWS
 {
-
-    //requires bonjour discovery deamon to run on the VC - computer
-    //Download Bonjour Print Services for Windows v2.0.2 https://support.apple.com/kb/DL999?locale=en_US
-    //https://learn.adafruit.com/bonjour-zeroconf-networking-for-windows-and-linux
-    public static class ControllerDiscovery
-    {
-
-        //  private static string resolvePort = "dns-sd -L "RobotWebServices_ABB_Testrack" _http._tcp";
-        public static async Task<List<IZeroconfHost>> Discover()
-        {
-            var serviceList = new List<IZeroconfHost>();
-            ILookup<string, string> domains = await ZeroconfResolver.BrowseDomainsAsync().ConfigureAwait(false);
-            var responses = await ZeroconfResolver.ResolveAsync(domains.Select(g => g.Key)).ConfigureAwait(false);
-
-            foreach (var resp in responses)
-                serviceList.Add(resp);
-
-            var results = await ZeroconfResolver.ResolveAsync("_http._tcp.local.");
-
-
-            ;
-
-            return serviceList;
-        }
-
-    }
 
     public class IRC5Session
     {
@@ -92,15 +64,12 @@ namespace RWS
 
 
 
-        public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
+        public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string url, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
         {
 
+            CreateHttpClient(requestMethod, url, dataParameters, urlParameters, out HttpClient client, out HttpRequestMessage requestMessage);
 
-            HttpResponseMessage response;
-
-            CreateHttpClient(requestMethod, domain, dataParameters, urlParameters, headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage);
-
-            response = await client.SendAsync(requestMessage).ConfigureAwait(false);
+            HttpResponseMessage response = await client.SendAsync(requestMessage).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
 
@@ -108,10 +77,10 @@ namespace RWS
 
         }
 
-        protected void CreateHttpClient(RequestMethod requestMethod, string domain, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, Tuple<string, string>[] headers, out HttpClientHandler handler, out HttpClient client, out HttpRequestMessage requestMessage)
+        protected void CreateHttpClient(RequestMethod requestMethod, string url, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, out HttpClient client, out HttpRequestMessage requestMessage)
         {
             var method = new HttpMethod(requestMethod.ToString());
-            handler = new HttpClientHandler()
+            var handler = new HttpClientHandler()
             {
                 Credentials = new NetworkCredential(UAS.User, UAS.Password),
                 CookieContainer = CookieContainer,
@@ -119,15 +88,12 @@ namespace RWS
                 UseProxy = false,
                 ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; }
             };
+
             client = new HttpClient(handler);
-            requestMessage = new HttpRequestMessage(method, BuildUri(domain, urlParameters));
-            foreach (var header in headers)
-            {
-                requestMessage.Headers.Add(header.Item1, header.Item2);
-            }
-            requestMessage.Headers.Accept.ParseAdd(AcceptHeader);
 
-
+            requestMessage = new HttpRequestMessage(method, BuildUri(url, urlParameters));
+            requestMessage.Headers.Remove("Accept");
+            requestMessage.Headers.Add("Accept", AcceptHeader);
 
             switch (requestMethod)
             {
@@ -138,9 +104,10 @@ namespace RWS
                 default:
                     if (dataParameters != null)
                     {
-                        //requestMessage.Content = new StringContent(BuildDataParameters(dataParameters));
-                        //requestMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
-                        requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8, AcceptHeader);
+
+                        requestMessage.Content = new StringContent(BuildDataParameters(dataParameters), Encoding.UTF8);
+                        requestMessage.Content.Headers.Remove("Content-Type");
+                        requestMessage.Content.Headers.Add("Content-Type", ContentTypeHeader);
 
                     }
                     break;
@@ -148,9 +115,9 @@ namespace RWS
         }
 
 
-        protected static async Task<T> DeserializeJsonResponse<T>(HttpResponseMessage resp1)
+        protected static async Task<T> DeserializeJsonResponse<T>(HttpResponseMessage response)
         {
-            using var sr = new StreamReader(await resp1.Content.ReadAsStreamAsync().ConfigureAwait(true));
+            using var sr = new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(true));
 
             var content = sr.ReadToEnd();
             T jsonResponse = default;
@@ -169,6 +136,7 @@ namespace RWS
 
             return combinedParams.ToString();
         }
+
         protected Uri BuildUri(string domain, Tuple<string, string>[] urlParameters)
         {
             var url = string.Format(CultureInfo.InvariantCulture, TemplateUrl, Address.Full, domain);
@@ -227,7 +195,7 @@ namespace RWS
             IP = address;
             Full = address;
 
-            if (address.Contains(':'))
+            if (address.Contains(":"))
             {
                 IP = address.Split(':')[0];
                 Port = address.Split(':')[1];

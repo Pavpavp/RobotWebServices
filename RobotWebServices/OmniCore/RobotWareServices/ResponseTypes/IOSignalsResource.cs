@@ -1,11 +1,14 @@
 ﻿using Newtonsoft.Json;
 using RWS.IRC5.SubscriptionServices;
 using RWS.OmniCore.ResponseTypes;
+using System.Threading.Tasks;
 
 namespace RWS.OmniCore.ResponseTypes
 {
     public class IOSignalsResource : SubscriptionEventHelper<IOEventArgs, int>
     {
+        private int _lvalue;
+
 
         public event ValueChangedIOEventHandler OnValueChanged
         {
@@ -28,7 +31,12 @@ namespace RWS.OmniCore.ResponseTypes
         }
 
         [JsonProperty(PropertyName = "_links")]
-        public _LinksRes7 Links { get; set; }
+        public _LinksRes7 Links
+        {
+            get;
+
+            set;
+        }
 
         [JsonProperty(PropertyName = "_type")]
         public string Type { get; set; }
@@ -37,8 +45,30 @@ namespace RWS.OmniCore.ResponseTypes
 
         public string Name { get; set; }
         public string Category { get; set; }
-        public string LValue { get; set; }
+        public int LValue
+        {
+            get
+            {
+                return _lvalue;
+            }
+
+            set
+            {
+                if (Cs != null) 
+                    UpdateSignal(Name, value);
+
+                _lvalue = value;
+            }
+        }
+
+        private async void UpdateSignal(string signal, int value)
+        {
+            await Cs.RobotWareService.UpdateIOSignalValueAsync(signal, value.ToString());
+        }
+
         public string LState { get; set; }
+
+
     }
 
 

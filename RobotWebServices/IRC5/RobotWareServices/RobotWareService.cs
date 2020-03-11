@@ -96,9 +96,9 @@ namespace RWS.IRC5.RobotWareServices
         {
 
             Tuple<string, string>[] dataParameters = { Tuple.Create("lvalue", lvalue) };
-            Tuple<string, string>[] urlParameters = { Tuple.Create("action", "set"), Tuple.Create("json", "1") };
+            Tuple<string, string>[] urlParameters = null;
 
-            await ControllerSession.CallAsync<IODevicesState>(RequestMethod.POST, $"rw/iosystem/signals/{signal}", dataParameters, urlParameters).ConfigureAwait(false);
+            await ControllerSession.CallAsync<IODevicesState>(RequestMethod.POST, $"rw/iosystem/signals/{signal}/set-value", dataParameters, urlParameters).ConfigureAwait(false);
 
         }
 
