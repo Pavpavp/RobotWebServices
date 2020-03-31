@@ -16,5 +16,13 @@ namespace RWS
 
             return source.Remove(source.LastIndexOf(value, StringComparison.InvariantCulture));
         }
+
+        public static void AddOrOverwrite<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
+        {
+            if (dict.ContainsKey(key))
+                dict[key] = value;
+            else
+                dict.Add(key, value);
+        }
     }
 }

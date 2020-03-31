@@ -10,7 +10,7 @@ namespace RWS.OmniCore.ResponseTypes
         private int _lvalue;
 
 
-        public event ValueChangedIOEventHandler OnValueChanged
+        public event IOValueChangedEventHandler ValueChanged
         {
             add
             {
@@ -47,14 +47,10 @@ namespace RWS.OmniCore.ResponseTypes
         public string Category { get; set; }
         public int LValue
         {
-            get
-            {
-                return _lvalue;
-            }
-
+            get { return _lvalue; }
             set
             {
-                if (Cs != null) 
+                if (Cs != null)
                     UpdateSignal(Title, value);
 
                 _lvalue = value;

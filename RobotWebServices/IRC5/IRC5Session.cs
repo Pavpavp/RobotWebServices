@@ -15,6 +15,9 @@ using Newtonsoft.Json;
 using RWS.IRC5;
 using RWS.IRC5.ResponseTypes;
 using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace RWS
 {
@@ -64,7 +67,7 @@ namespace RWS
 
 
 
-        public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string url, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters, params Tuple<string, string>[] headers)
+        public async Task<BaseResponse<T>> CallAsync<T>(RequestMethod requestMethod, string url, Tuple<string, string>[] dataParameters, Tuple<string, string>[] urlParameters)
         {
 
             CreateHttpClient(requestMethod, url, dataParameters, urlParameters, out HttpClient client, out HttpRequestMessage requestMessage);
@@ -117,9 +120,13 @@ namespace RWS
 
         protected static async Task<T> DeserializeJsonResponse<T>(HttpResponseMessage response)
         {
+       
+
+
             using var sr = new StreamReader(await response.Content.ReadAsStreamAsync().ConfigureAwait(true));
 
             var content = sr.ReadToEnd();
+
             T jsonResponse = default;
             jsonResponse = JsonConvert.DeserializeObject<T>(content);
             return jsonResponse;

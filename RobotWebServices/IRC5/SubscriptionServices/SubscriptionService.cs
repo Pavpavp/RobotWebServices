@@ -13,7 +13,9 @@ namespace RWS.IRC5.SubscriptionServices
 {
     public class SubscriptionService
     {
+        static SemaphoreSlim SemaphoreSlim = new SemaphoreSlim(1, 1);
         public IRC5Session ControllerSession { get; set; }
+        public Dictionary<string, OpenSubscriptionData> SubscriptionSessions { get; set; } = new Dictionary<string, OpenSubscriptionData>();
 
         public SubscriptionService(IRC5Session cs)
         {

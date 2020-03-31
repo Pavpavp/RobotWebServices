@@ -7,7 +7,7 @@ namespace RWS.IRC5.ResponseTypes
     public class IOSignalsState : SubscriptionEventHelper<IOEventArgs, int>
     {
 
-        public event ValueChangedIOEventHandler OnValueChanged
+        public event IOValueChangedEventHandler OnValueChanged
         {
             add
             {

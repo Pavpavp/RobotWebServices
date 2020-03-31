@@ -14,12 +14,13 @@ namespace RWS.IRC5.SubscriptionServices
 
     public abstract class SubscriptionEventHelper<T, TRet> where T : IEventArgs<TRet>
     {
-        public delegate void ValueChangedIOEventHandler(object source, T args);
+
+        public delegate void IOValueChangedEventHandler(object source, T args);
         private string TemplateSocketUrl { get; set; } = "ws://{0}/poll";
         private string Protocol { get; set; } = "robapi2_subscription";
-        public Dictionary<object, ClientWebSocket> SubscriptionSockets { get; } = new Dictionary<object, ClientWebSocket>();
-        protected ValueChangedIOEventHandler ValueChangedEventHandler { get; set; }
-        public int Prio { get; set; } = 1;
+        public Dictionary<object, ClientWebSocket> SubscriptionSockets { get; set; } = new Dictionary<object, ClientWebSocket>();
+        protected IOValueChangedEventHandler ValueChangedEventHandler { get; set; }
+        public int Prio { get; private set; } = 1;
         public IRC5Session Cs { get; set; }
 
 
@@ -38,30 +39,72 @@ namespace RWS.IRC5.SubscriptionServices
             handler.UseProxy = false;
             handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => { return true; };
 
+            string prioAndResourcePath = Prio + "|" + resource.Replace(resource.Split('/').Last(), "");
+
+            int resourceCount = 1;
+            Cs.SubscriptionService.SubscriptionSessions.TryGetValue(prioAndResourcePath, out var outSubscData);
+            resourceCount += outSubscData == null ? 0 : outSubscData.ResourceCount;
+
             Tuple<string, string>[] dataParameters =
             {
-                    Tuple.Create("resources", "1"),
-                    Tuple.Create("1", resource),
-                    Tuple.Create("1-p", Prio.ToString(CultureInfo.InvariantCulture))
+                    Tuple.Create("resources", resourceCount.ToString()),
+                    Tuple.Create(resourceCount.ToString(), resource),
+                    Tuple.Create(resourceCount + "-p", Prio.ToString(CultureInfo.InvariantCulture))
                 };
 
-            using HttpContent httpContent = new StringContent(IRC5Session.BuildDataParameters(dataParameters));
+
+            string combinedParams = IRC5Session.BuildDataParameters(dataParameters);
+
+            if (outSubscData != null)
+            {
+                outSubscData.CombinedParameters = (outSubscData.CombinedParameters.Contains(resource) ?
+                outSubscData.CombinedParameters : (outSubscData.CombinedParameters + "&" + combinedParams).TrimStart('&'));
+
+                outSubscData.ResourceCount = resourceCount;
+            }
+            else
+            {
+                Cs.SubscriptionService.SubscriptionSessions.AddOrOverwrite(prioAndResourcePath, new OpenSubscriptionData()
+                {
+                    ResourceCount = resourceCount,
+                    CombinedParameters = combinedParams,
+                    ResourcePath = prioAndResourcePath.Split('|')[1],
+                    GroupID = "1",
+                });
+            }
+            outSubscData = Cs.SubscriptionService.SubscriptionSessions[prioAndResourcePath];
+
+
+            using HttpContent httpContent = new StringContent(outSubscData.CombinedParameters);
             httpContent.Headers.Remove("Content-Type");
             httpContent.Headers.Add("Content-Type", Cs.ContentTypeHeader);
 
             using HttpClient client = new HttpClient(handler);
-            await SocketThreadAsync(client, httpContent, eventArgs).ConfigureAwait(true);
+
+            outSubscData.RequestQueue.Add(new Task(() => { StartSubscriptionAsync(Cs, resource, eventArgs); }));
+
+            if (outSubscData.RequestQueue.Count == 1)
+            {
+                outSubscData.CombinedParameters = "";
+
+                await SocketThreadAsync(client, httpContent, eventArgs, prioAndResourcePath);
+            }
         }
 
 
-        private async Task SocketThreadAsync(HttpClient client, HttpContent httpContent, T eventArgs)
-        {
 
+        private async Task SocketThreadAsync(HttpClient client, HttpContent httpContent, T eventArgs, string prioAndResourcePath)
+        {
             using CancellationTokenSource cancelToken = new CancellationTokenSource();
 
-            var uri = new Uri(string.Format(CultureInfo.InvariantCulture, Cs.TemplateUrl, Cs.Address.Full, "subscription"));
+            //await Cs.SubscriptionService.SemaphoreSlim.WaitAsync();
 
-            var resp = await client.PostAsync(uri, httpContent).ConfigureAwait(true);
+            HttpResponseMessage resp;
+
+            Cs.SubscriptionService.SubscriptionSessions.TryGetValue(prioAndResourcePath, out var outSubscData);
+
+            var uri = new Uri(string.Format(CultureInfo.InvariantCulture, Cs.TemplateUrl, Cs.Address.Full, "subscription"));
+            resp = await client.PostAsync(uri, httpContent).ConfigureAwait(true);
 
             resp.EnsureSuccessStatusCode();
 
@@ -70,6 +113,9 @@ namespace RWS.IRC5.SubscriptionServices
             string abbCookie = header.Value.Last().Split('=')[1].Split(';')[0];
 
             string sessionCookie = header.Value.First().Split(':')[0].Split('=')[1];
+
+            if (outSubscData.RequestQueue.Count == 1)
+                sessionCookie = outSubscData.Session;
 
             using ClientWebSocket wSock = new ClientWebSocket();
 
@@ -94,6 +140,15 @@ namespace RWS.IRC5.SubscriptionServices
             wSock.Options.AddSubProtocol(Protocol);
 
             await wSock.ConnectAsync(new Uri(string.Format(CultureInfo.InvariantCulture, TemplateSocketUrl, Cs.Address.Full)), cancelToken.Token).ConfigureAwait(true);
+
+            //If user tried to open more sockets while we were opening this one async, they will be combined in the last Task of the RequestQueue
+            //and subscribed to in the same session as this one
+            if (outSubscData.RequestQueue.Count > 1)
+            {
+                outSubscData.Session = sessionCookie;
+                outSubscData.RequestQueue.Last().Start();
+            }
+            outSubscData.RequestQueue.Clear();
 
             var bArr = new byte[1024];
             ArraySegment<byte> arr = new ArraySegment<byte>(bArr);
@@ -121,7 +176,20 @@ namespace RWS.IRC5.SubscriptionServices
                         break;
                 }
             }
+
+
         }
+    }
+
+    public class OpenSubscriptionData
+    {
+        public string Resource { get; set; }
+        public int ResourceCount { get; set; }
+        public string ResourcePath { get; set; }
+        public string CombinedParameters { get; set; }
+        public string Session { get; set; }
+        public string GroupID { get; set; }
+        public List<Task> RequestQueue { get; set; } = new List<Task>();
 
     }
 }

@@ -1,20 +1,19 @@
 ﻿using Newtonsoft.Json;
-using RWS.IRC5.SubscriptionServices;
+using RWS.IRC5.ResponseTypes;
 
-
-namespace RWS.IRC5.ResponseTypes
+namespace RWS.IRC5.SubscriptionServices
 {
     public class IOSignalState : SubscriptionEventHelper<IOEventArgs, int>
     {
 
-        public event ValueChangedIOEventHandler OnValueChanged
+        public event IOValueChangedEventHandler OnValueChanged
         {
             add
             {
                 var ioEventArgs = new IOEventArgs();
 
                 ValueChangedEventHandler += value;
-                StartSubscriptionAsync(Controller, $"/rw/iosystem/{Links.Self.Href}".Replace("?json=1", ";state"), ioEventArgs);
+                StartSubscriptionAsync(Controller, $"/rw/iosystem/{Title}".Replace("?json=1", ";state"), ioEventArgs);
             }
             remove
             {

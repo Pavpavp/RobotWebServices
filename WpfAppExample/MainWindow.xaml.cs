@@ -51,13 +51,19 @@ namespace WpfAppExample
 
             var rwsOmniSession = new OmniCoreSession(new Address("localhost:80"));
             var ios = await rwsOmniSession.RobotWareService.GetIOSignalsAsync();
-            var testSignals = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest1");
-
-
-            testSignals.OnValueChanged += IOSignal_ValueChanged;
-            testSignals.LValue = 0;
-
-
+            var testSignal1 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest1");
+            var testSignal2 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest2");
+            var testSignal3 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest3");
+            var testSignal4 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest4");
+            var testSignal5 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest5");
+            var testSignal6 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest6");
+            ;
+            testSignal1.ValueChanged += IOSignal_ValueChanged;
+            testSignal2.ValueChanged += IOSignal_ValueChanged;
+            testSignal3.ValueChanged += IOSignal_ValueChanged;
+            testSignal4.ValueChanged += IOSignal_ValueChanged;
+            testSignal5.ValueChanged += IOSignal_ValueChanged;
+            testSignal6.ValueChanged += IOSignal_ValueChanged;
 
             //var rwsCs6 = new IRC5Session(new Address($"{vc6.IPAddress}:{vc6.WebServicesPort}"));
             //////var info6 = await rwsCs6.RobotWareService.GetSystemInformationAsync();
@@ -86,23 +92,7 @@ namespace WpfAppExample
 
         }
 
-        //private async Task GetSysInfo2(OmniCoreSession c)
-        //{
-        //    var sysInfo = await c.RobotWareService.GetSystemInformationAsync();
-        //    c.Version = sysInfo.State.First().RWVersionName;
-        //    c.CtrlName = sysInfo.State.First().Name;
 
-        //    if (c.Version == null)
-        //        return;
-
-        //    CtrlList.Add(c);
-
-        //    ListView_CtrlList.ItemsSource = null;
-        //    ListView_CtrlList.ItemsSource = CtrlList;
-
-        //    CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ListView_CtrlList.ItemsSource);
-        //    view.SortDescriptions.Add(new SortDescription("Version", ListSortDirection.Ascending));
-        //}
 
         private async Task GetSysInfo(IRC5Session c)
         {
