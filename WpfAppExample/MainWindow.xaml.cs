@@ -38,7 +38,6 @@ namespace WpfAppExample
             InitializeComponent();
 
 
-
             Main();
 
 
@@ -47,23 +46,11 @@ namespace WpfAppExample
 
         private async void Main()
         {
-
+            var rwsIrc5Session = new IRC5Session(new Address("localhost:80"));
 
             var rwsOmniSession = new OmniCoreSession(new Address("localhost:80"));
             var ios = await rwsOmniSession.RobotWareService.GetIOSignalsAsync();
-            var testSignal1 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest1");
-            var testSignal2 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest2");
-            var testSignal3 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest3");
-            var testSignal4 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest4");
-            var testSignal5 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest5");
-            var testSignal6 = ios.Embedded.Resources.FirstOrDefault(s => s.Name == "doSigTest6");
-            ;
-            testSignal1.ValueChanged += IOSignal_ValueChanged;
-            testSignal2.ValueChanged += IOSignal_ValueChanged;
-            testSignal3.ValueChanged += IOSignal_ValueChanged;
-            testSignal4.ValueChanged += IOSignal_ValueChanged;
-            testSignal5.ValueChanged += IOSignal_ValueChanged;
-            testSignal6.ValueChanged += IOSignal_ValueChanged;
+
 
             //var rwsCs6 = new IRC5Session(new Address($"{vc6.IPAddress}:{vc6.WebServicesPort}"));
             //////var info6 = await rwsCs6.RobotWareService.GetSystemInformationAsync();
@@ -77,7 +64,6 @@ namespace WpfAppExample
 
 
             // var ios = await rwsCs1.RobotWareService.GetIOSignalsAsync();
-
 
             //var dev = await rwsCs1.RobotWareService.GetIODevicesAsync();
             //var dev2 = await rwsCs1.RobotWareService.GetIODevicesAsync();
